@@ -7,9 +7,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800 p-4">
+        <ul class="flex space-x-4">
+            <li><a href="main.html" class="text-white hover:text-gray-400">Home</a></li>
+            <li><a href="weapons.html" class="text-white hover:text-gray-400">Weapons</a></li>
+            <li><a href="ammunition.html" class="text-white hover:text-gray-400">Ammunition</a></li>
+            <li><a href="personnel.html" class="text-white hover:text-gray-400">Personnel</a></li>
+            <li><a href="storage.html" class="text-white hover:text-gray-400">Storage</a></li>
+            <li><a href="logs.html" class="text-white hover:text-gray-400">Logs</a></li>
+        </ul>
+    </nav>
     <section id="logs" class="p-6">
-        <h2 class="text-2xl font-semibold">Logs</h2>
-        <!-- Content for Logs Section -->
+        <h2 class="text-2xl font-semibold mb-4">Logs</h2>
+        <table class="min-w-full bg-gray-800">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-700">Date</th>
+                    <th class="py-2 px-4 border-b border-gray-700">Event</th>
+                    <th class="py-2 px-4 border-b border-gray-700">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-700">2025-03-20</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Inspection</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Routine inspection of storage facilities.</td>
+                </tr>
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-700">2025-03-18</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Maintenance</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Maintenance of weapons and ammunition.</td>
+                </tr>
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-700">2025-03-15</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Training</td>
+                    <td class="py-2 px-4 border-b border-gray-700">Training session for new personnel.</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 </body>
 </html>
