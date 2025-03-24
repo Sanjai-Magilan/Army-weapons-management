@@ -1,0 +1,187 @@
+name: Deploy Army Weapons Management
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    # Manual trigger
+
+jobs:
+  validate:
+    name: Validate HTML and CSS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install -g html-validate
+          npm install -g stylelint
+          npm install -g stylelint-config-standard
+
+      - name: Validate HTML
+        run: |
+          html-validate "*.html"
+
+      - name: Extract inline CSS for validation
+        run: |
+          mkdir -p .temp-css
+          for file in *.html; do
+            grep -o '<style[^>]*>.*</style>' "$file" | sed 's/<style[^>]*>//g; s/<\/style>//g' > ".temp-css/${file%.html}.css"
+          done
+
+      - name: Validate CSS
+        run: |
+          stylelint ".temp-css/*.css" || true
+
+  lint:
+    name: Lint JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install ESLint
+        run: npm install -g eslint
+
+      - name: Extract inline JavaScript for linting
+        run: |
+          mkdir -p .temp-js
+          for file in *.html; do
+            grep -o '<script>.*</script>' "$file" | sed 's/<script>//g; s/<\/script>//g' > ".temp-js/${file%.html}.js"
+          done
+
+      - name: Lint JavaScript
+        run: |
+          eslint .temp-js/*.js --no-eslintrc --env browser --parser-options=ecmaVersion:2021 || true
+
+  test-links:
+    name: Check Internal Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install link checker
+        run: npm install -g broken-link-checker
+
+      - name: Setup local server
+        run: |
+          npm install -g http-server
+          http-server -p 8080 &
+          sleep 5
+
+      - name: Check internal links
+        run: blc http://localhost:8080/Dashboard.html -ro --exclude 'https://cdn.tailwindcss.com'
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [validate, lint, test-links]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install -g minify
+
+      - name: Optimize HTML files
+        run: |
+          mkdir -p dist
+          for file in *.html; do
+            minify "$file" > "dist/$file"
+          done
+
+      - name: Copy assets
+        run: |
+          if [ -d "assets" ]; then
+            cp -r assets dist/
+          fi
+          if [ -d "images" ]; then
+            cp -r images dist/
+          fi
+          if [ -d "scripts" ]; then
+            cp -r scripts dist/
+          fi
+          if [ -d "styles" ]; then
+            cp -r styles dist/
+          fi
+
+      - name: Create README for GitHub Pages
+        run: |
+          cat > dist/README.md << EOF
+          # Army Weapons Management System
+          
+          This is an automated deployment of the Army Weapons Management System.
+          
+          ## Features
+          
+          - Weapons inventory management
+          - Ammunition tracking
+          - Personnel assignments
+          - Storage locations management
+          - Activity logging
+          
+          Last deployed: $(date)
+          EOF
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+
+  notification:
+    name: Send Deployment Notification
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Army Weapons Management System deployment completed :rocket:'
+          SLACK_TITLE: Deployment Status
+          SLACK_USERNAME: GitHub Actions
+        if: env.SLACK_WEBHOOK != null
+        continue-on-error: true
+
+      - name: Create deployment summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "* Army Weapons Management System deployed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "* Deployment triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Timestamp: $(date)" >> $GITHUB_STEP_SUMMARY
+```

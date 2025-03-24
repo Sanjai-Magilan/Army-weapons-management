@@ -36,24 +36,27 @@
             </button>
         </div>
         
-        <!-- Filter Controls -->
-        <div class="mb-6 flex space-x-4">
-            <div>
-                <label for="logDateFilter" class="block mb-1">Filter by Date:</label>
-                <input type="date" id="logDateFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
+        <!-- Filter Controls - Fix vertical alignment -->
+        <div class="flex justify-between mb-6">
+            <div class="flex space-x-4">
+                <div>
+                    <label for="logDateFilter" class="block mb-1">Filter by Date:</label>
+                    <input type="date" id="logDateFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600 w-48">
+                </div>
+                <div>
+                    <label for="logTypeFilter" class="block mb-1">Filter by Type:</label>
+                    <select id="logTypeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <option value="">All Types</option>
+                        <option value="Checkout">Checkout</option>
+                        <option value="Return">Return</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Incident">Incident</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label for="logTypeFilter" class="block mb-1">Filter by Type:</label>
-                <select id="logTypeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Types</option>
-                    <option value="Checkout">Checkout</option>
-                    <option value="Return">Return</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Inspection">Inspection</option>
-                    <option value="Incident">Incident</option>
-                </select>
-            </div>
-            <div class="self-end">
+            <div> 
+                <label class="invisible block mb-1">Action</label> 
                 <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
                     Clear Filters
                 </button>
