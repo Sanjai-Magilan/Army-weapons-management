@@ -21,27 +21,17 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: |
-          npm install -g html-validate
-          npm install -g stylelint
-          npm install -g stylelint-config-standard
+          npm install -g html-validate stylelint stylelint-config-standard
 
       - name: Validate HTML
-        run: |
-          html-validate "*.html"
-
-      - name: Extract inline CSS for validation
-        run: |
-          mkdir -p .temp-css
-          for file in *.html; do
-            grep -o '<style[^>]*>.*</style>' "$file" | sed 's/<style[^>]*>//g; s/<\/style>//g' > ".temp-css/${file%.html}.css"
-          done
+        run: find . -name "*.html" -exec html-validate {} \;
 
       - name: Validate CSS
-        run: |
-          stylelint ".temp-css/*.css" || true
+        run: stylelint "**/*.css" || true
 
   lint:
     name: Lint JavaScript
@@ -55,20 +45,13 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install ESLint
         run: npm install -g eslint
 
-      - name: Extract inline JavaScript for linting
-        run: |
-          mkdir -p .temp-js
-          for file in *.html; do
-            grep -o '<script>.*</script>' "$file" | sed 's/<script>//g; s/<\/script>//g' > ".temp-js/${file%.html}.js"
-          done
-
       - name: Lint JavaScript
-        run: |
-          eslint .temp-js/*.js --no-eslintrc --env browser --parser-options=ecmaVersion:2021 || true
+        run: eslint "**/*.js" --no-eslintrc --env browser --parser-options=ecmaVersion:2021 || true
 
   test-links:
     name: Check Internal Links
@@ -82,6 +65,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install link checker
         run: npm install -g broken-link-checker
@@ -109,6 +93,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm install -g minify
@@ -116,42 +101,10 @@ jobs:
       - name: Optimize HTML files
         run: |
           mkdir -p dist
-          for file in *.html; do
-            minify "$file" > "dist/$file"
-          done
+          find . -name "*.html" -exec sh -c 'minify "$1" > "dist/$(basename "$1")"' _ {} \;
 
-      - name: Copy assets
-        run: |
-          if [ -d "assets" ]; then
-            cp -r assets dist/
-          fi
-          if [ -d "images" ]; then
-            cp -r images dist/
-          fi
-          if [ -d "scripts" ]; then
-            cp -r scripts dist/
-          fi
-          if [ -d "styles" ]; then
-            cp -r styles dist/
-          fi
-
-      - name: Create README for GitHub Pages
-        run: |
-          cat > dist/README.md << EOF
-          # Army Weapons Management System
-          
-          This is an automated deployment of the Army Weapons Management System.
-          
-          ## Features
-          
-          - Weapons inventory management
-          - Ammunition tracking
-          - Personnel assignments
-          - Storage locations management
-          - Activity logging
-          
-          Last deployed: $(date)
-          EOF
+      - name: Copy all necessary files
+        run: cp -r * dist/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -184,4 +137,3 @@ jobs:
           echo "* Deployment triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "* Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "* Timestamp: $(date)" >> $GITHUB_STEP_SUMMARY
-```
