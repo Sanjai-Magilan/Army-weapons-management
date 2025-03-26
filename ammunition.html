@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ammunition - Army Weapons Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-750': '#2d3748',
+                        'gray-850': '#1a202c',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    
+    <!-- Navbar with enhanced styling - Matched with Dashboard -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        </div>
+        <ul class="flex space-x-4 ml-auto">
+            <li><a href="Dashboard.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-chart-line mr-1"></i> Dashboard</a></li>
+            <li><a href="weapons.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-gun mr-1"></i> Weapons</a></li>
+            <li><a href="ammunition.html" class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md"><i class="fas fa-box-open mr-1"></i> Ammunition</a></li>
+            <li><a href="personnel.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-users mr-1"></i> Personnel</a></li>
+            <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
+            <li><a href="logs.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
+        </ul>
+        <div class="ml-4 relative group">
+            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
+                <span class="ml-2">Admin</span>
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Ammunition Management with Dashboard-style UI -->
+    <section id="ammunition" class="p-6 flex-grow">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold">Ammunition Inventory</h2>
+            <div class="flex items-center">
+                <span class="text-gray-400 mr-2">Last updated:</span>
+                <span id="lastUpdated">Today, 10:30 AM</span>
+                <button id="refreshBtn" class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 rounded-full">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-blue-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Types</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalAmmoTypes">5</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 8% from last month
+                        </p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-box-open text-3xl text-blue-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-green-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Rounds</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalAmmoCount">4,500</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-bullseye text-3xl text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-yellow-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Expiring Soon</h3>
+                        <p class="text-3xl font-bold mt-2" id="expiringSoon">1</p>
+                        <p class="text-sm text-red-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 1 more than last month
+                        </p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-clock text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search and Filters -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-2">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input id="searchAmmo" type="text" placeholder="Search ammunition..." 
+                            class="block w-full pl-10 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-file-export mr-2"></i> Export
+                        </button>
+                        <button id="printBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-print mr-2"></i> Print
+                        </button>
+                        <button id="addAmmoBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-plus mr-2"></i> Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button id="filtersToggle" class="flex items-center bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md w-full justify-center lg:w-auto">
+                    <i class="fas fa-filter mr-2 text-blue-400"></i> Filters
+                    <i class="fas fa-chevron-down ml-2 text-gray-400 transition-transform duration-200" id="filterChevron"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Expanded Filters -->
+        <div id="filtersPanel" class="bg-gray-800 rounded-lg shadow-lg p-5 mb-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="caliberFilter" class="block text-sm font-medium text-gray-400 mb-1">Caliber</label>
+                    <select id="caliberFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Calibers</option>
+                        <option value="5.56mm">5.56mm</option>
+                        <option value="7.62mm">7.62mm</option>
+                        <option value="9mm">9mm</option>
+                        <option value="12.7mm">12.7mm</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="locationFilter" class="block text-sm font-medium text-gray-400 mb-1">Location</label>
+                    <select id="locationFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Locations</option>
+                        <option value="Storage A">Storage A</option>
+                        <option value="Storage B">Storage B</option>
+                        <option value="Storage C">Storage C</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="expiryFilter" class="block text-sm font-medium text-gray-400 mb-1">Expiry</label>
+                    <select id="expiryFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Expiry</option>
+                        <option value="soon">Expiring Soon (< 6 months)</option>
+                        <option value="future">Future (> 6 months)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quantityFilter" class="block text-sm font-medium text-gray-400 mb-1">Quantity</label>
+                    <select id="quantityFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Quantities</option>
+                        <option value="low">Low Stock (< 500)</option>
+                        <option value="medium">Medium Stock (500-1000)</option>
+                        <option value="high">High Stock (> 1000)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-times mr-2"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Ammunition Table with Dashboard Style -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead>
+                        <tr>
+                            <th class="p-4 bg-gray-750">
+                                <div class="flex items-center">
+                                    <input id="selectAll" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 cursor-pointer">
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Caliber</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Location</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Expiry Date</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                            <th class="py-3 px-4 bg-gray-750 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ammoTableBody" class="divide-y divide-gray-700">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bulk Actions -->
+            <div id="bulkActionsBar" class="hidden bg-gray-750 p-3 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-blue-500 bg-opacity-20 p-2 rounded-full mr-3">
+                        <i class="fas fa-layer-group text-blue-400"></i>
+                    </div>
+                    <span class="mr-2"><span id="selectedCount" class="font-bold">0</span> items selected</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="bulkDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-trash mr-1"></i> Delete
+                    </button>
+                    <button id="bulkMoveBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-exchange-alt mr-1"></i> Move
+                    </button>
+                    <button id="bulkExportBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-file-export mr-1"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Inventory Insights with Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-blue-400"></i>
+                    Ammunition by Caliber
+                </h3>
+                <div class="h-64">
+                    <canvas id="ammoTypeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
+                    Stock Levels by Location
+                </h3>
+                <div class="h-64">
+                    <canvas id="locationChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="bg-gray-800 rounded-lg shadow-lg p-3 flex flex-col sm:flex-row items-center justify-between">
+            <div class="text-sm text-gray-400 mb-4 sm:mb-0 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-blue-400"></i>
+                Showing <span id="startRange" class="font-semibold mx-1 text-white">1</span> to 
+                <span id="endRange" class="font-semibold mx-1 text-white">5</span> of 
+                <span id="totalItems" class="font-semibold mx-1 text-white">5</span> entries
+            </div>
+            <div class="flex">
+                <button id="prevPageBtn" class="px-3 py-1 bg-gray-750 text-gray-400 rounded-l-md border border-r-0 border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="paginationContainer" class="flex"></div>
+                <button id="nextPageBtn" class="px-3 py-1 bg-gray-750 text-gray-400 rounded-r-md border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Add/Edit Ammunition Modal -->
+    <div id="ammoModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl" id="modalContent">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                <h3 id="modalTitle" class="text-xl font-bold flex items-center">
+                    <i class="fas fa-box-open text-blue-500 mr-2"></i>
+                    Add New Ammunition
+                </h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="ammoForm" class="space-y-6">
+                <input type="hidden" id="ammoId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="ammoType" class="block text-sm font-medium text-gray-400 mb-1">
+                            Type <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="ammoType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="caliber" class="block text-sm font-medium text-gray-400 mb-1">
+                            Caliber <span class="text-red-500">*</span>
+                        </label>
+                        <select id="caliber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select Caliber</option>
+                            <option value="5.56mm">5.56mm</option>
+                            <option value="7.62mm">7.62mm</option>
+                            <option value="9mm">9mm</option>
+                            <option value="12.7mm">12.7mm</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="quantity" class="block text-sm font-medium text-gray-400 mb-1">
+                            Quantity <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="quantity" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-400 mb-1">
+                            Location <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="location" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="expiryDate" class="block text-sm font-medium text-gray-400 mb-1">
+                            Expiry Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="expiryDate" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelAmmoBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-4 bg-gray-800 mt-6">
+        <p>© 2025 Army Weapons Management System</p>
+    </footer>
+
+    <script>
+        // Sample ammunition data (using your existing data as a starting point)
+        let ammunition = [
+            { id: 1, type: "5.56mm NATO", caliber: "5.56mm", quantity: 1200, location: "Storage A", expiryDate: "2027-06-15" },
+            { id: 2, type: "7.62mm NATO", caliber: "7.62mm", quantity: 800, location: "Storage B", expiryDate: "2027-05-20" },
+            { id: 3, type: "9mm Parabellum", caliber: "9mm", quantity: 1500, location: "Storage C", expiryDate: "2028-01-10" }
+        ];
+
+        // DOM elements
+        const searchAmmo = document.getElementById('searchAmmo');
+        const ammoTableBody = document.getElementById('ammoTableBody');
+        const addAmmoBtn = document.getElementById('addAmmoBtn');
+        const ammoModal = document.getElementById('ammoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const ammoForm = document.getElementById('ammoForm');
+        const cancelAmmoBtn = document.getElementById('cancelAmmoBtn');
+        const ammoIdInput = document.getElementById('ammoId');
+
+        // Add DOM elements for filters
+        const caliberFilter = document.getElementById('caliberFilter');
+        const locationFilter = document.getElementById('locationFilter');
+        const expiryFilter = document.getElementById('expiryFilter');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        // Render ammunition table
+        function renderAmmoTable(ammoArray = ammunition) {
+            ammoTableBody.innerHTML = '';
+            
+            ammoArray.forEach(ammo => {
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-700');
+                
+                row.innerHTML = `
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.id}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.type}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.caliber}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.quantity}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.location}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">${ammo.expiryDate}</td>
+                    <td class="py-3 px-5 border-b border-gray-600 text-left">
+                        <button class="text-blue-400 hover:text-blue-300 mr-2 edit-btn" data-id="${ammo.id}">Edit</button>
+                        <button class="text-red-400 hover:text-red-300 delete-btn" data-id="${ammo.id}">Delete</button>
+                    </td>
+                `;
+                  
+                ammoTableBody.appendChild(row);
+            });
+             
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    editAmmo(id);
+                });
+            });
+             
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    deleteAmmo(id);
+                });
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            let filteredAmmo = ammunition;
+            
+            // Search filter
+            const searchTerm = searchAmmo.value.toLowerCase();
+            if (searchTerm) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.type.toLowerCase().includes(searchTerm) ||
+                    ammo.caliber.toLowerCase().includes(searchTerm) ||
+                    ammo.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Caliber filter
+            const caliberValue = caliberFilter.value;
+            if (caliberValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.caliber === caliberValue
+                );
+            }
+            
+            // Location filter
+            const locationValue = locationFilter.value;
+            if (locationValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.location === locationValue
+                );
+            }
+            
+            // Expiry filter
+            const expiryValue = expiryFilter.value;
+            if (expiryValue) {
+                const today = new Date();
+                const sixMonthsFromNow = new Date();
+                sixMonthsFromNow.setMonth(today.getMonth() + 6);
+                
+                if (expiryValue === 'soon') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate <= sixMonthsFromNow;
+                    });
+                } else if (expiryValue === 'future') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate > sixMonthsFromNow;
+                    });
+                }
+            }
+            
+            renderAmmoTable(filteredAmmo);
+        }
+
+        // Update search functionality to use applyFilters
+        searchAmmo.addEventListener('input', applyFilters);
+
+        // Add event listeners for filters
+        caliberFilter.addEventListener('change', applyFilters);
+        locationFilter.addEventListener('change', applyFilters);
+        expiryFilter.addEventListener('change', applyFilters);
+
+        // Clear filters
+        clearFiltersBtn.addEventListener('click', function() {
+            searchAmmo.value = '';
+            caliberFilter.value = '';
+            locationFilter.value = '';
+            expiryFilter.value = '';
+            renderAmmoTable();
+        });
+
+        // Show add ammunition modal
+        addAmmoBtn.addEventListener('click', function() {
+            modalTitle.textContent = 'Add New Ammunition';
+            ammoForm.reset();
+            ammoIdInput.value = '';
+            ammoModal.classList.remove('hidden');
+        });
+
+        // Cancel button in modal
+        cancelAmmoBtn.addEventListener('click', function() {
+            ammoModal.classList.add('hidden');
+        });
+
+        // Form submission
+        ammoForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = ammoIdInput.value ? parseInt(ammoIdInput.value) : ammunition.length > 0 ? Math.max(...ammunition.map(a => a.id)) + 1 : 1;
+            const type = document.getElementById('ammoType').value;
+            const caliber = document.getElementById('caliber').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const location = document.getElementById('location').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            
+            if (ammoIdInput.value) {
+                // Edit existing ammunition
+                const index = ammunition.findIndex(a => a.id === parseInt(ammoIdInput.value));
+                if (index !== -1) {
+                    ammunition[index] = { id, type, caliber, quantity, location, expiryDate };
+                }
+            } else {
+                // Add new ammunition
+                ammunition.push({ id, type, caliber, quantity, location, expiryDate });
+            }
+                        
+            applyFilters();
+            ammoModal.classList.add('hidden');
+        });
+
+        // Edit ammunition
+        function editAmmo(id) {
+            const ammo = ammunition.find(a => a.id === id);
+            if (ammo) {
+                modalTitle.textContent = 'Edit Ammunition';
+                ammoIdInput.value = ammo.id;
+                document.getElementById('ammoType').value = ammo.type;
+                document.getElementById('caliber').value = ammo.caliber;
+                document.getElementById('quantity').value = ammo.quantity;
+                document.getElementById('location').value = ammo.location;
+                document.getElementById('expiryDate').value = ammo.expiryDate;
+                
+                ammoModal.classList.remove('hidden');
+            }
+        }
+
+        // Delete ammunition
+        function deleteAmmo(id) {
+            if (confirm('Are you sure you want to delete this ammunition?')) {
+                ammunition = ammunition.filter(a => a.id !== id);
+                applyFilters();
+            }
+        }
+
+        // Initial render
+        renderAmmoTable();
+    </script>
+</body>
+</html>

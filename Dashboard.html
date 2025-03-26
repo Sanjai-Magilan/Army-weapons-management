@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Army Weapons Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    
+    <!-- Navbar with enhanced styling -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        </div>
+        <ul class="flex space-x-4 ml-auto">
+            <li><a href="Dashboard.html" class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md"><i class="fas fa-chart-line mr-1"></i> Dashboard</a></li>
+            <li><a href="weapons.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-gun mr-1"></i> Weapons</a></li>
+            <li><a href="ammunition.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-box-open mr-1"></i> Ammunition</a></li>
+            <li><a href="personnel.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-users mr-1"></i> Personnel</a></li>
+            <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
+            <li><a href="logs.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
+        </ul>
+        <div class="ml-4 relative group">
+            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
+                <span class="ml-2">Admin</span>
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Dashboard with improved layout -->
+    <section id="dashboard" class="p-6 flex-grow">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold">Dashboard</h2>
+            <div class="flex items-center">
+                <span class="text-gray-400 mr-2">Last updated:</span>
+                <span id="lastUpdated">Today, 10:30 AM</span>
+                <button id="refreshBtn" class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 rounded-full">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-blue-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Weapons</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalWeapons">120</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-rifle text-3xl text-blue-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-green-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Ammo</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalAmmo">5,000</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 8% from last month
+                        </p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-bullseye text-3xl text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-purple-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Personnel Assigned</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalPersonnel">75</p>
+                        <p class="text-sm text-yellow-400 mt-2">
+                            <i class="fas fa-equals"></i> Same as last month
+                        </p>
+                    </div>
+                    <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-users text-3xl text-purple-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts & Analytics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-blue-400"></i>
+                    Weapons by Type
+                </h3>
+                <div class="h-64">
+                    <canvas id="weaponsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
+                    Ammo Inventory Status
+                </h3>
+                <div class="h-64">
+                    <canvas id="ammoChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activities and Alerts -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 lg:col-span-2">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-history mr-2 text-blue-400"></i>
+                    Recent Activities
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-start border-b border-gray-700 pb-4">
+                        <div class="bg-blue-500 bg-opacity-20 p-2 rounded-full mr-3">
+                            <i class="fas fa-exchange-alt text-blue-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Weapon Checkout</p>
+                            <p class="text-sm text-gray-400">M4A1 Carbine assigned to Sgt. John Doe</p>
+                            <p class="text-xs text-gray-500 mt-1">Today, 9:45 AM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start border-b border-gray-700 pb-4">
+                        <div class="bg-green-500 bg-opacity-20 p-2 rounded-full mr-3">
+                            <i class="fas fa-box text-green-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Ammunition Received</p>
+                            <p class="text-sm text-gray-400">1000 rounds of 5.56mm NATO received</p>
+                            <p class="text-xs text-gray-500 mt-1">Today, 8:30 AM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start border-b border-gray-700 pb-4">
+                        <div class="bg-yellow-500 bg-opacity-20 p-2 rounded-full mr-3">
+                            <i class="fas fa-wrench text-yellow-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Maintenance Completed</p>
+                            <p class="text-sm text-gray-400">M249 LMG maintenance completed by Tech Sgt. Miller</p>
+                            <p class="text-xs text-gray-500 mt-1">Yesterday, 3:20 PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start pb-4">
+                        <div class="bg-red-500 bg-opacity-20 p-2 rounded-full mr-3">
+                            <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Low Ammunition Alert</p>
+                            <p class="text-sm text-gray-400">9mm Parabellum inventory below 20% threshold</p>
+                            <p class="text-xs text-gray-500 mt-1">Yesterday, 10:15 AM</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="mt-4 text-blue-400 hover:text-blue-300 text-sm flex items-center">
+                    View all activities <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-bell mr-2 text-yellow-400"></i>
+                    Alerts & Notifications
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-red-900 bg-opacity-30 border-l-4 border-red-500 p-3 rounded">
+                        <p class="font-semibold flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2 text-red-400"></i>
+                            Critical Alert
+                        </p>
+                        <p class="text-sm mt-1">3 weapons overdue for return</p>
+                    </div>
+                    
+                    <div class="bg-yellow-900 bg-opacity-30 border-l-4 border-yellow-500 p-3 rounded">
+                        <p class="font-semibold flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2 text-yellow-400"></i>
+                            Warning
+                        </p>
+                        <p class="text-sm mt-1">5 weapons due for maintenance</p>
+                    </div>
+                    
+                    <div class="bg-blue-900 bg-opacity-30 border-l-4 border-blue-500 p-3 rounded">
+                        <p class="font-semibold flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-blue-400"></i>
+                            Information
+                        </p>
+                        <p class="text-sm mt-1">Monthly inventory check scheduled</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h4 class="text-md font-semibold mb-3">Quick Actions</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded text-sm flex flex-col items-center">
+                            <i class="fas fa-clipboard-list mb-1"></i>
+                            New Report
+                        </button>
+                        <button class="p-3 bg-green-600 hover:bg-green-700 rounded text-sm flex flex-col items-center">
+                            <i class="fas fa-plus mb-1"></i>
+                            Add Weapon
+                        </button>
+                        <button class="p-3 bg-yellow-600 hover:bg-yellow-700 rounded text-sm flex flex-col items-center">
+                            <i class="fas fa-search mb-1"></i>
+                            Audit
+                        </button>
+                        <button class="p-3 bg-purple-600 hover:bg-purple-700 rounded text-sm flex flex-col items-center">
+                            <i class="fas fa-file-export mb-1"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer with improved design -->
+    <footer class="bg-gray-800 mt-auto">
+        <div class="container mx-auto py-6 px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-shield-alt text-blue-500 text-xl mr-2"></i>
+                    <p>© 2025 Army Weapons Management System</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm text-gray-500">
+                <p>Version 2.3.0 | Last Updated: March 26, 2025</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Notification System -->
+    <div id="notification-container" class="fixed top-20 right-4 w-80 z-50 space-y-2"></div>
+    
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update real-time date
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+            
+            // Weapons Distribution Chart
+            const weaponsCtx = document.getElementById('weaponsChart').getContext('2d');
+            new Chart(weaponsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Rifles', 'Pistols', 'Machine Guns', 'Sniper Rifles', 'Shotguns', 'Other'],
+                    datasets: [{
+                        data: [45, 25, 20, 10, 15, 5],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',  // Blue
+                            'rgba(16, 185, 129, 0.8)',  // Green
+                            'rgba(245, 158, 11, 0.8)',  // Yellow
+                            'rgba(239, 68, 68, 0.8)',   // Red
+                            'rgba(139, 92, 246, 0.8)',  // Purple
+                            'rgba(156, 163, 175, 0.8)'  // Gray
+                        ],
+                        borderWidth: 1,
+                        borderColor: '#1F2937'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Ammunition Status Chart
+            const ammoCtx = document.getElementById('ammoChart').getContext('2d');
+            new Chart(ammoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['5.56mm', '7.62mm', '9mm', '.45 ACP', '12 Gauge', '.50 BMG'],
+                    datasets: [{
+                        label: 'Current Stock',
+                        data: [2500, 1800, 800, 1200, 400, 300],
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Minimum Required',
+                        data: [1000, 1000, 1000, 500, 200, 100],
+                        backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Sample notification function
+            function showNotification(message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                
+                const bgColor = type === 'success' ? 'bg-green-800' : 
+                                type === 'error' ? 'bg-red-800' : 
+                                type === 'warning' ? 'bg-yellow-800' : 'bg-blue-800';
+                                
+                const icon = type === 'success' ? 'fa-check-circle' : 
+                            type === 'error' ? 'fa-exclamation-circle' : 
+                            type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+                
+                notification.className = `${bgColor} text-white p-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out`;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas ${icon} mr-2"></i>
+                        <p>${message}</p>
+                    </div>
+                    <button class="absolute top-1 right-1 text-white hover:text-gray-300">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                container.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.add('translate-x-0');
+                    notification.classList.remove('translate-x-full');
+                }, 10);
+                
+                // Automatically remove after 5 seconds
+                setTimeout(() => {
+                    notification.classList.add('opacity-0');
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 300);
+                }, 5000);
+                
+                // Close button functionality
+                notification.querySelector('button').addEventListener('click', () => {
+                    notification.classList.add('opacity-0');
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 300);
+                });
+            }
+            
+            // Refresh button functionality
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                const button = this;
+                button.classList.add('animate-spin');
+                
+                // Simulate data refresh
+                setTimeout(() => {
+                    document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                    button.classList.remove('animate-spin');
+                    showNotification('Dashboard data refreshed successfully', 'success');
+                }, 1000);
+            });
+            
+            // Data Integration - This would be replaced with actual localStorage data in a real app
+            function loadDashboardData() {
+                // Try to get data from localStorage
+                const weapons = JSON.parse(localStorage.getItem('weapons')) || [];
+                const ammunition = JSON.parse(localStorage.getItem('ammunition')) || [];
+                const personnel = JSON.parse(localStorage.getItem('personnel')) || [];
+                
+                // Update dashboard with real data if available, otherwise use demo data
+                document.getElementById('totalWeapons').textContent = weapons.length || 120;
+                
+                // Calculate total ammo if data exists
+                if (ammunition.length > 0) {
+                    const totalAmmo = ammunition.reduce((total, ammo) => total + (ammo.quantity || 0), 0);
+                    document.getElementById('totalAmmo').textContent = totalAmmo.toLocaleString();
+                }
+                
+                document.getElementById('totalPersonnel').textContent = personnel.length || 75;
+            }
+            
+            // Load dashboard data
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>
