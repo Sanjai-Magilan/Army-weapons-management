@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage - Army Weapons Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between">
+        <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        <ul class="flex space-x-4 ml-auto">
+            <li><a href="Dashboard.html" class="hover:text-gray-300">Dashboard</a></li>
+            <li><a href="weapons.html" class="hover:text-gray-300">Weapons</a></li>
+            <li><a href="ammunition.html" class="hover:text-gray-300">Ammunition</a></li>
+            <li><a href="personnel.html" class="hover:text-gray-300">Personnel</a></li>
+            <li><a href="storage.html" class="hover:text-gray-300 font-bold">Storage</a></li>
+            <li><a href="logs.html" class="hover:text-gray-300">Logs</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Storage Management -->
+    <section id="storage" class="p-6">
+        <h2 class="text-3xl font-bold mb-6">Storage Management</h2>
+        
+        <!-- Search and Add Section -->
+        <div class="flex justify-between mb-6">
+            <div class="w-1/3">
+                <input type="text" id="searchStorage" placeholder="Search storage locations..." 
+                    class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button id="addStorageBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
+                Add New Storage Location
+            </button>
+        </div>
+        
+        <!-- Filters Section -->
+        <div class="flex justify-between mb-6">
+            <div class="flex space-x-4">
+                <select id="typeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
+                    <option value="">All Types</option>
+                    <option value="Armory">Armory</option>
+                    <option value="Ammunition Depot">Ammunition Depot</option>
+                    <option value="Secure Room">Secure Room</option>
+                    <option value="Vault">Vault</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="securityLevelFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
+                    <option value="">All Security Levels</option>
+                    <option value="Level 1">Level 1</option>
+                    <option value="Level 2">Level 2</option>
+                    <option value="Level 3">Level 3</option>
+                    <option value="Top Secret">Top Secret</option>
+                </select>
+                <select id="capacityFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
+                    <option value="">All Capacities</option>
+                    <option value="low">Low Usage (< 50%)</option>
+                    <option value="medium">Medium Usage (50-80%)</option>
+                    <option value="high">High Usage (> 80%)</option>
+                </select>
+            </div>
+            <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
+                Clear Filters
+            </button>
+        </div>
+        
+        <!-- Storage Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
+                <thead class="bg-gray-700">
+                    <tr>
+                        <th class="py-3 px-4 text-left">ID</th>
+                        <th class="py-3 px-4 text-left">Location Name</th>
+                        <th class="py-3 px-4 text-left">Type</th>
+                        <th class="py-3 px-4 text-left">Capacity</th>
+                        <th class="py-3 px-4 text-left">Current Usage</th>
+                        <th class="py-3 px-4 text-left">Security Level</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="storageTableBody">
+                    <!-- Sample data, will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <!-- Add/Edit Storage Modal -->
+    <div id="storageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 p-6 rounded-lg w-1/2">
+            <h3 id="modalTitle" class="text-xl font-bold mb-4">Add New Storage Location</h3>
+            <form id="storageForm">
+                <input type="hidden" id="storageId">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="locationName" class="block mb-1">Location Name</label>
+                        <input type="text" id="locationName" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                    </div>
+                    <div>
+                        <label for="storageType" class="block mb-1">Type</label>
+                        <select id="storageType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                            <option value="Armory">Armory</option>
+                            <option value="Ammunition Depot">Ammunition Depot</option>
+                            <option value="Secure Room">Secure Room</option>
+                            <option value="Vault">Vault</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="capacity" class="block mb-1">Capacity</label>
+                        <input type="number" id="capacity" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                    </div>
+                    <div>
+                        <label for="currentUsage" class="block mb-1">Current Usage</label>
+                        <input type="number" id="currentUsage" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                    </div>
+                    <div>
+                        <label for="securityLevel" class="block mb-1">Security Level</label>
+                        <select id="securityLevel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                            <option value="Level 1">Level 1</option>
+                            <option value="Level 2">Level 2</option>
+                            <option value="Level 3">Level 3</option>
+                            <option value="Top Secret">Top Secret</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelStorageBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-4 bg-gray-800 mt-6">
+        <p>© 2025 Army Weapons Management System</p>
+    </footer>
+
+    <script>
+        // Sample storage data
+        let storageLocations = [
+            { id: 1, name: "Armory A", type: "Armory", capacity: 200, usage: 120, securityLevel: "Level 3" },
+            { id: 2, name: "Ammunition Depot B", type: "Ammunition Depot", capacity: 5000, usage: 3250, securityLevel: "Level 2" },
+            { id: 3, name: "Command Vault", type: "Vault", capacity: 50, usage: 25, securityLevel: "Top Secret" }
+        ];
+
+        // DOM elements
+        const searchStorage = document.getElementById('searchStorage');
+        const storageTableBody = document.getElementById('storageTableBody');
+        const addStorageBtn = document.getElementById('addStorageBtn');
+        const storageModal = document.getElementById('storageModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const storageForm = document.getElementById('storageForm');
+        const cancelStorageBtn = document.getElementById('cancelStorageBtn');
+        const storageIdInput = document.getElementById('storageId');
+        const typeFilter = document.getElementById('typeFilter');
+        const securityLevelFilter = document.getElementById('securityLevelFilter');
+        const capacityFilter = document.getElementById('capacityFilter');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        // Render storage table
+        function renderStorageTable(locationsArray = storageLocations) {
+            storageTableBody.innerHTML = '';
+            
+            locationsArray.forEach(location => {
+                const row = document.createElement('tr');
+                row.classList.add('border-t', 'border-gray-700', 'hover:bg-gray-750');
+                
+                const usagePercentage = Math.round((location.usage / location.capacity) * 100);
+                let usageClass = 'bg-green-700';
+                if (usagePercentage >= 90) {
+                    usageClass = 'bg-red-700';
+                } else if (usagePercentage >= 70) {
+                    usageClass = 'bg-yellow-700';
+                }
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4">${location.id}</td>
+                    <td class="py-3 px-4">${location.name}</td>
+                    <td class="py-3 px-4">${location.type}</td>
+                    <td class="py-3 px-4">${location.capacity}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center">
+                            <span class="mr-2">${location.usage} (${usagePercentage}%)</span>
+                            <div class="w-24 bg-gray-600 rounded-full h-2.5">
+                                <div class="${usageClass} h-2.5 rounded-full" style="width: ${usagePercentage}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">${location.securityLevel}</td>
+                    <td class="py-3 px-4">
+                        <button class="text-blue-400 hover:text-blue-300 mr-2 edit-btn" data-id="${location.id}">Edit</button>
+                        <button class="text-red-400 hover:text-red-300 delete-btn" data-id="${location.id}">Delete</button>
+                    </td>
+                `;
+                
+                storageTableBody.appendChild(row);
+            });
+            
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    editStorage(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    deleteStorage(id);
+                });
+            });
+        }
+
+        // Create apply filters function
+        function applyFilters() {
+            let filteredLocations = storageLocations;
+            
+            // Search filter
+            const searchTerm = searchStorage.value.toLowerCase();
+            if (searchTerm) {
+                filteredLocations = filteredLocations.filter(location => 
+                    location.name.toLowerCase().includes(searchTerm) ||
+                    location.type.toLowerCase().includes(searchTerm) ||
+                    location.securityLevel.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Type filter
+            const typeValue = typeFilter.value;
+            if (typeValue) {
+                filteredLocations = filteredLocations.filter(location => 
+                    location.type === typeValue
+                );
+            }
+            
+            // Security level filter
+            const securityValue = securityLevelFilter.value;
+            if (securityValue) {
+                filteredLocations = filteredLocations.filter(location => 
+                    location.securityLevel === securityValue
+                );
+            }
+            
+            // Capacity filter
+            const capacityValue = capacityFilter.value;
+            if (capacityValue) {
+                filteredLocations = filteredLocations.filter(location => {
+                    const usagePercentage = (location.usage / location.capacity) * 100;
+                    
+                    if (capacityValue === 'low') {
+                        return usagePercentage < 50;
+                    } else if (capacityValue === 'medium') {
+                        return usagePercentage >= 50 && usagePercentage <= 80;
+                    } else if (capacityValue === 'high') {
+                        return usagePercentage > 80;
+                    }
+                    
+                    return true;
+                });
+            }
+            
+            renderStorageTable(filteredLocations);
+        }
+
+        // Update search functionality to use applyFilters
+        searchStorage.addEventListener('input', applyFilters);
+
+        // Add event listeners for filters
+        typeFilter.addEventListener('change', applyFilters);
+        securityLevelFilter.addEventListener('change', applyFilters);
+        capacityFilter.addEventListener('change', applyFilters);
+
+        // Clear filters
+        clearFiltersBtn.addEventListener('click', function() {
+            searchStorage.value = '';
+            typeFilter.value = '';
+            securityLevelFilter.value = '';
+            capacityFilter.value = '';
+            renderStorageTable();
+        });
+
+        // Show add storage modal
+        addStorageBtn.addEventListener('click', function() {
+            modalTitle.textContent = 'Add New Storage Location';
+            storageForm.reset();
+            storageIdInput.value = '';
+            storageModal.classList.remove('hidden');
+        });
+
+        // Cancel button in modal
+        cancelStorageBtn.addEventListener('click', function() {
+            storageModal.classList.add('hidden');
+        });
+
+        // Form submission
+        storageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = storageIdInput.value ? parseInt(storageIdInput.value) : storageLocations.length > 0 ? Math.max(...storageLocations.map(s => s.id)) + 1 : 1;
+            const name = document.getElementById('locationName').value;
+            const type = document.getElementById('storageType').value;
+            const capacity = parseInt(document.getElementById('capacity').value);
+            const usage = parseInt(document.getElementById('currentUsage').value);
+            const securityLevel = document.getElementById('securityLevel').value;
+            
+            if (storageIdInput.value) {
+                // Edit existing storage
+                const index = storageLocations.findIndex(s => s.id === parseInt(storageIdInput.value));
+                if (index !== -1) {
+                    storageLocations[index] = { id, name, type, capacity, usage, securityLevel };
+                }
+            } else {
+                // Add new storage
+                storageLocations.push({ id, name, type, capacity, usage, securityLevel });
+            }
+            
+            applyFilters(); // Apply the current filters instead of just rendering all
+            storageModal.classList.add('hidden');
+        });
+
+        // Edit storage location
+        function editStorage(id) {
+            const location = storageLocations.find(s => s.id === id);
+            if (location) {
+                modalTitle.textContent = 'Edit Storage Location';
+                storageIdInput.value = location.id;
+                document.getElementById('locationName').value = location.name;
+                document.getElementById('storageType').value = location.type;
+                document.getElementById('capacity').value = location.capacity;
+                document.getElementById('currentUsage').value = location.usage;
+                document.getElementById('securityLevel').value = location.securityLevel;
+                
+                storageModal.classList.remove('hidden');
+            }
+        }
+
+        // Delete storage location
+        function deleteStorage(id) {
+            if (confirm('Are you sure you want to delete this storage location?')) {
+                storageLocations = storageLocations.filter(s => s.id !== id);
+                applyFilters(); // Apply the current filters instead of just rendering all
+            }
+        }
+
+        // Initial render
+        renderStorageTable();
+    </script>
+</body>
+</html>
