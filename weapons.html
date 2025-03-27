@@ -5,189 +5,537 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weapons - Army Weapons Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-750': '#2d3748',
+                        'gray-850': '#1a202c',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
     
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between">
-        <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+    <!-- Navbar with enhanced styling - Matched with Dashboard -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        </div>
         <ul class="flex space-x-4 ml-auto">
-            <li><a href="Dashboard.html" class="hover:text-gray-300">Dashboard</a></li>
-            <li><a href="weapons.html" class="hover:text-gray-300 font-bold">Weapons</a></li>
-            <li><a href="ammunition.html" class="hover:text-gray-300">Ammunition</a></li>
-            <li><a href="personnel.html" class="hover:text-gray-300">Personnel</a></li>
-            <li><a href="storage.html" class="hover:text-gray-300">Storage</a></li>
-            <li><a href="logs.html" class="hover:text-gray-300">Logs</a></li>
+            <li><a href="Dashboard.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-chart-line mr-1"></i> Dashboard</a></li>
+            <li><a href="weapons.html" class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md"><i class="fas fa-gun mr-1"></i> Weapons</a></li>
+            <li><a href="ammunition.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-box-open mr-1"></i> Ammunition</a></li>
+            <li><a href="personnel.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-users mr-1"></i> Personnel</a></li>
+            <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
+            <li><a href="logs.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
         </ul>
+        <div class="ml-4 relative group">
+            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
+                <span class="ml-2">Admin</span>
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            </div>
+        </div>
     </nav>
     
-    <!-- Weapons Management -->
-    <section id="weapons" class="p-6">
-        <h2 class="text-3xl font-bold mb-6">Weapons Management</h2>
-        
-        <!-- Search and Add Section -->
-        <div class="flex justify-between mb-6">
-            <div class="w-1/3">
-                <input type="text" id="searchWeapons" placeholder="Search weapons..." 
-                    class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Weapons Management with Dashboard-style UI -->
+    <section id="weapons" class="p-6 flex-grow">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold">Weapons Inventory</h2>
+            <div class="flex items-center">
+                <span class="text-gray-400 mr-2">Last updated:</span>
+                <span id="lastUpdated">Today, 10:30 AM</span>
+                <button id="refreshBtn" class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 rounded-full">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
-            <button id="addWeaponBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
-                Add New Weapon
-            </button>
         </div>
         
-        <!-- Filters Section -->
-        <div class="flex justify-between mb-6">
-            <div class="flex space-x-4">
-                <select id="weaponTypeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Types</option>
-                    <option value="Rifle">Rifle</option>
-                    <option value="Pistol">Pistol</option>
-                    <option value="Machine Gun">Machine Gun</option>
-                    <option value="Sniper">Sniper</option>
-                    <option value="Other">Other</option>
-                </select>
-                <select id="statusFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Statuses</option>
-                    <option value="Active">Active</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Decommissioned">Decommissioned</option>
-                </select>
-                <select id="assignmentFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Assignments</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="unassigned">Unassigned</option>
-                </select>
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-blue-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Weapons</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalWeapons">126</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 5% from last month
+                        </p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-gun text-3xl text-blue-400"></i>
+                    </div>
+                </div>
             </div>
-            <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
-                Clear Filters
-            </button>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-green-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Active Deployment</h3>
+                        <p class="text-3xl font-bold mt-2" id="activeWeapons">85</p>
+                        <p class="text-sm text-green-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 8% from last month
+                        </p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-shield-alt text-3xl text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-yellow-500 transition-transform transform hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Maintenance Required</h3>
+                        <p class="text-3xl font-bold mt-2" id="maintenanceNeeded">12</p>
+                        <p class="text-sm text-red-400 mt-2">
+                            <i class="fas fa-arrow-up"></i> 3 more than last month
+                        </p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-tools text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <!-- Weapons Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="py-3 px-4 text-left">ID</th>
-                        <th class="py-3 px-4 text-left">Name</th>
-                        <th class="py-3 px-4 text-left">Type</th>
-                        <th class="py-3 px-4 text-left">Serial Number</th>
-                        <th class="py-3 px-4 text-left">Status</th>
-                        <th class="py-3 px-4 text-left">Assigned To</th>
-                        <th class="py-3 px-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="weaponsTableBody">
-                    <!-- Sample data, will be populated by JavaScript -->
-                </tbody>
-            </table>
+        <!-- Search and Filters -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-2">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input id="searchWeapons" type="text" placeholder="Search weapons..." 
+                            class="block w-full pl-10 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-file-export mr-2"></i> Export
+                        </button>
+                        <button id="printBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-print mr-2"></i> Print
+                        </button>
+                        <button id="addWeaponBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
+                            <i class="fas fa-plus mr-2"></i> Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button id="filtersToggle" class="flex items-center bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md w-full justify-center lg:w-auto">
+                    <i class="fas fa-filter mr-2 text-blue-400"></i> Filters
+                    <i class="fas fa-chevron-down ml-2 text-gray-400 transition-transform duration-200" id="filterChevron"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Expanded Filters -->
+        <div id="filtersPanel" class="bg-gray-800 rounded-lg shadow-lg p-5 mb-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="typeFilter" class="block text-sm font-medium text-gray-400 mb-1">Weapon Type</label>
+                    <select id="typeFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Types</option>
+                        <option value="Rifle">Rifle</option>
+                        <option value="Pistol">Pistol</option>
+                        <option value="Machine Gun">Machine Gun</option>
+                        <option value="Sniper Rifle">Sniper Rifle</option>
+                        <option value="Shotgun">Shotgun</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="statusFilter" class="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                    <select id="statusFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="In Storage">In Storage</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Decommissioned">Decommissioned</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="locationFilter" class="block text-sm font-medium text-gray-400 mb-1">Location</label>
+                    <select id="locationFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Locations</option>
+                        <option value="Armory A">Armory A</option>
+                        <option value="Armory B">Armory B</option>
+                        <option value="Armory C">Armory C</option>
+                        <option value="Field Deployment">Field Deployment</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="conditionFilter" class="block text-sm font-medium text-gray-400 mb-1">Condition</label>
+                    <select id="conditionFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Conditions</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-times mr-2"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Weapons Table with Dashboard Style -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead>
+                        <tr>
+                            <th class="p-4 bg-gray-750">
+                                <div class="flex items-center">
+                                    <input id="selectAll" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 cursor-pointer">
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Model</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Serial Number</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Location</th>
+                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Condition</th>
+                            <th class="py-3 px-4 bg-gray-750 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weaponsTableBody" class="divide-y divide-gray-700">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bulk Actions -->
+            <div id="bulkActionsBar" class="hidden bg-gray-750 p-3 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-blue-500 bg-opacity-20 p-2 rounded-full mr-3">
+                        <i class="fas fa-layer-group text-blue-400"></i>
+                    </div>
+                    <span class="mr-2"><span id="selectedCount" class="font-bold">0</span> weapons selected</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="bulkDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-trash mr-1"></i> Delete
+                    </button>
+                    <button id="bulkMoveBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-exchange-alt mr-1"></i> Move
+                    </button>
+                    <button id="bulkExportBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <i class="fas fa-file-export mr-1"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Inventory Insights with Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-blue-400"></i>
+                    Weapons by Type
+                </h3>
+                <div class="h-64">
+                    <canvas id="weaponTypeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
+                    Status Distribution
+                </h3>
+                <div class="h-64">
+                    <canvas id="weaponStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="bg-gray-800 rounded-lg shadow-lg p-3 flex flex-col sm:flex-row items-center justify-between">
+            <div class="text-sm text-gray-400 mb-4 sm:mb-0 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-blue-400"></i>
+                Showing <span id="startRange" class="font-semibold mx-1 text-white">1</span> to 
+                <span id="endRange" class="font-semibold mx-1 text-white">10</span> of 
+                <span id="totalItems" class="font-semibold mx-1 text-white">126</span> entries
+            </div>
+            <div class="flex">
+                <button id="prevPageBtn" class="px-3 py-1 bg-gray-750 text-gray-400 rounded-l-md border border-r-0 border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="paginationContainer" class="flex">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                <button id="nextPageBtn" class="px-3 py-1 bg-gray-750 text-gray-400 rounded-r-md border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
     </section>
     
     <!-- Add/Edit Weapon Modal -->
-    <div id="weaponModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 p-6 rounded-lg w-1/2">
-            <h3 id="modalTitle" class="text-xl font-bold mb-4">Add New Weapon</h3>
-            <form id="weaponForm">
+    <div id="weaponModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl" id="modalContent">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                <h3 id="modalTitle" class="text-xl font-bold flex items-center">
+                    <i class="fas fa-gun text-blue-500 mr-2"></i>
+                    Add New Weapon
+                </h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="weaponForm" class="space-y-6">
                 <input type="hidden" id="weaponId">
-                <div class="grid grid-cols-2 gap-4 mb-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="weaponName" class="block mb-1">Weapon Name</label>
-                        <input type="text" id="weaponName" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
-                    </div>
-                    <div>
-                        <label for="weaponType" class="block mb-1">Type</label>
-                        <select id="weaponType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="weaponType" class="block text-sm font-medium text-gray-400 mb-1">
+                            Type <span class="text-red-500">*</span>
+                        </label>
+                        <select id="weaponType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select Type</option>
                             <option value="Rifle">Rifle</option>
                             <option value="Pistol">Pistol</option>
                             <option value="Machine Gun">Machine Gun</option>
-                            <option value="Sniper">Sniper</option>
-                            <option value="Other">Other</option>
+                            <option value="Sniper Rifle">Sniper Rifle</option>
+                            <option value="Shotgun">Shotgun</option>
                         </select>
                     </div>
                     <div>
-                        <label for="serialNumber" class="block mb-1">Serial Number</label>
-                        <input type="text" id="serialNumber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="weaponModel" class="block text-sm font-medium text-gray-400 mb-1">
+                            Model <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="weaponModel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label for="status" class="block mb-1">Status</label>
-                        <select id="status" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="serialNumber" class="block text-sm font-medium text-gray-400 mb-1">
+                            Serial Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="serialNumber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="weaponStatus" class="block text-sm font-medium text-gray-400 mb-1">
+                            Status <span class="text-red-500">*</span>
+                        </label>
+                        <select id="weaponStatus" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select Status</option>
                             <option value="Active">Active</option>
+                            <option value="In Storage">In Storage</option>
                             <option value="Maintenance">Maintenance</option>
                             <option value="Decommissioned">Decommissioned</option>
                         </select>
                     </div>
                     <div>
-                        <label for="assignedTo" class="block mb-1">Assigned To</label>
-                        <input type="text" id="assignedTo" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="weaponLocation" class="block text-sm font-medium text-gray-400 mb-1">
+                            Location <span class="text-red-500">*</span>
+                        </label>
+                        <select id="weaponLocation" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select Location</option>
+                            <option value="Armory A">Armory A</option>
+                            <option value="Armory B">Armory B</option>
+                            <option value="Armory C">Armory C</option>
+                            <option value="Field Deployment">Field Deployment</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="weaponCondition" class="block text-sm font-medium text-gray-400 mb-1">
+                            Condition <span class="text-red-500">*</span>
+                        </label>
+                        <select id="weaponCondition" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select Condition</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
                     </div>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancelWeaponBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-400 mb-1">Notes</label>
+                    <textarea id="notes" rows="3" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+                    <button type="button" id="cancelWeaponBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center">
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center p-4 bg-gray-800 mt-6">
-        <p>© 2025 Army Weapons Management System</p>
-    </footer>
-
     <script>
-        // Sample weapon data
+        // Sample weapons data
         let weapons = [
-            { id: 1, name: "M4A1", type: "Rifle", serialNumber: "R12345", status: "Active", assignedTo: "John Doe" },
-            { id: 2, name: "Glock 19", type: "Pistol", serialNumber: "P67890", status: "Active", assignedTo: "Jane Smith" },
-            { id: 3, name: "M249", type: "Machine Gun", serialNumber: "M54321", status: "Maintenance", assignedTo: "" }
+            { id: 1, type: "Rifle", model: "M4A1", serialNumber: "RF-M4A1-001", status: "Active", location: "Field Deployment", condition: "Good", notes: "Standard issue rifle" },
+            { id: 2, type: "Pistol", model: "Glock 19", serialNumber: "PT-G19-002", status: "Active", location: "Field Deployment", condition: "Excellent", notes: "Sidearm for officers" },
+            { id: 3, type: "Sniper Rifle", model: "M24", serialNumber: "SR-M24-003", status: "In Storage", location: "Armory A", condition: "Excellent", notes: "Precision rifle" },
+            { id: 4, type: "Machine Gun", model: "M249", serialNumber: "MG-249-004", status: "Maintenance", location: "Armory B", condition: "Fair", notes: "Requires barrel replacement" },
+            { id: 5, type: "Shotgun", model: "M870", serialNumber: "SG-M87-005", status: "Active", location: "Field Deployment", condition: "Good", notes: "Tactical shotgun" },
+            { id: 6, type: "Rifle", model: "M16A4", serialNumber: "RF-M16A-006", status: "In Storage", location: "Armory A", condition: "Good", notes: "Standard infantry rifle" },
+            { id: 7, type: "Pistol", model: "SIG P226", serialNumber: "PT-P226-007", status: "Active", location: "Field Deployment", condition: "Good", notes: "Special forces sidearm" },
+            { id: 8, type: "Sniper Rifle", model: "Barrett M82", serialNumber: "SR-M82-008", status: "In Storage", location: "Armory C", condition: "Excellent", notes: "Anti-materiel rifle" },
+            { id: 9, type: "Machine Gun", model: "M240", serialNumber: "MG-240-009", status: "Decommissioned", location: "Armory B", condition: "Poor", notes: "Scheduled for replacement" },
+            { id: 10, type: "Rifle", model: "SCAR-H", serialNumber: "RF-SCR-010", status: "Active", location: "Field Deployment", condition: "Excellent", notes: "Special forces rifle" }
         ];
 
-        // DOM elements
+        // DOM Elements
+        const filtersToggle = document.getElementById('filtersToggle');
+        const filtersPanel = document.getElementById('filtersPanel');
+        const filterChevron = document.getElementById('filterChevron');
         const searchWeapons = document.getElementById('searchWeapons');
+        const typeFilter = document.getElementById('typeFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const locationFilter = document.getElementById('locationFilter');
+        const conditionFilter = document.getElementById('conditionFilter');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
         const weaponsTableBody = document.getElementById('weaponsTableBody');
-        const addWeaponBtn = document.getElementById('addWeaponBtn');
+
+        // Modal elements
         const weaponModal = document.getElementById('weaponModal');
         const modalTitle = document.getElementById('modalTitle');
         const weaponForm = document.getElementById('weaponForm');
-        const cancelWeaponBtn = document.getElementById('cancelWeaponBtn');
         const weaponIdInput = document.getElementById('weaponId');
-        const weaponTypeFilter = document.getElementById('weaponTypeFilter');
-        const statusFilter = document.getElementById('statusFilter');
-        const assignmentFilter = document.getElementById('assignmentFilter');
-        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        const addWeaponBtn = document.getElementById('addWeaponBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelWeaponBtn = document.getElementById('cancelWeaponBtn');
 
-        // Render weapons table
+        // Pagination elements
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const startRangeSpan = document.getElementById('startRange');
+        const endRangeSpan = document.getElementById('endRange');
+        const totalItemsSpan = document.getElementById('totalItems');
+
+        // Bulk actions elements
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCountSpan = document.getElementById('selectedCount');
+
+        // Pagination state
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let selectedItems = [];
+
+        // Toggle filters panel
+        filtersToggle.addEventListener('click', () => {
+            filtersPanel.classList.toggle('hidden');
+            filterChevron.classList.toggle('rotate-180');
+        });
+
+        // Render weapons table with pagination
         function renderWeaponsTable(weaponsArray = weapons) {
+            // Update table with paginated data
             weaponsTableBody.innerHTML = '';
             
-            weaponsArray.forEach(weapon => {
+            // Calculate pagination
+            const totalPages = Math.ceil(weaponsArray.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, weaponsArray.length);
+            
+            // Update pagination text
+            startRangeSpan.textContent = weaponsArray.length > 0 ? startIndex + 1 : 0;
+            endRangeSpan.textContent = endIndex;
+            totalItemsSpan.textContent = weaponsArray.length;
+            
+            // Disable/enable pagination buttons
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Update pagination container
+            paginationContainer.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `px-3 py-1 ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-750 text-gray-400'} border border-gray-700 hover:bg-gray-700`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderWeaponsTable(weaponsArray);
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
+            
+            // Get current page items
+            const currentItems = weaponsArray.slice(startIndex, endIndex);
+            
+            // Render table rows
+            currentItems.forEach(weapon => {
                 const row = document.createElement('tr');
-                row.classList.add('border-t', 'border-gray-700', 'hover:bg-gray-750');
+                row.className = 'hover:bg-gray-750 transition-colors duration-150';
+                
+                // Determine status color
+                let statusColor;
+                switch (weapon.status) {
+                    case 'Active': statusColor = 'text-green-400'; break;
+                    case 'In Storage': statusColor = 'text-blue-400'; break;
+                    case 'Maintenance': statusColor = 'text-yellow-400'; break;
+                    case 'Decommissioned': statusColor = 'text-red-400'; break;
+                    default: statusColor = 'text-gray-400';
+                }
+                
+                // Determine condition color
+                let conditionColor;
+                switch (weapon.condition) {
+                    case 'Excellent': conditionColor = 'text-green-400'; break;
+                    case 'Good': conditionColor = 'text-blue-400'; break;
+                    case 'Fair': conditionColor = 'text-yellow-400'; break;
+                    case 'Poor': conditionColor = 'text-red-400'; break;
+                    default: conditionColor = 'text-gray-400';
+                }
                 
                 row.innerHTML = `
-                    <td class="py-3 px-4">${weapon.id}</td>
-                    <td class="py-3 px-4">${weapon.name}</td>
-                    <td class="py-3 px-4">${weapon.type}</td>
-                    <td class="py-3 px-4">${weapon.serialNumber}</td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-1 rounded-full text-xs ${
-                            weapon.status === 'Active' ? 'bg-green-700' : 
-                            weapon.status === 'Maintenance' ? 'bg-yellow-700' : 'bg-red-700'
-                        }">${weapon.status}</span>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 cursor-pointer" data-id="${weapon.id}">
+                        </div>
                     </td>
-                    <td class="py-3 px-4">${weapon.assignedTo || 'Not assigned'}</td>
-                    <td class="py-3 px-4">
-                        <button class="text-blue-400 hover:text-blue-300 mr-2 edit-btn" data-id="${weapon.id}">Edit</button>
-                        <button class="text-red-400 hover:text-red-300 delete-btn" data-id="${weapon.id}">Delete</button>
+                    <td class="py-3 px-4">${weapon.id}</td>
+                    <td class="py-3 px-4">${weapon.type}</td>
+                    <td class="py-3 px-4">${weapon.model}</td>
+                    <td class="py-3 px-4">${weapon.serialNumber}</td>
+                    <td class="py-3 px-4"><span class="${statusColor}">${weapon.status}</span></td>
+                    <td class="py-3 px-4">${weapon.location}</td>
+                    <td class="py-3 px-4"><span class="${conditionColor}">${weapon.condition}</span></td>
+                    <td class="py-3 px-4 text-right">
+                        <button class="edit-btn text-blue-400 hover:text-blue-300 mx-1" data-id="${weapon.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn text-red-400 hover:text-red-300 mx-1" data-id="${weapon.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="view-btn text-green-400 hover:text-green-300 mx-1" data-id="${weapon.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </td>
                 `;
                 
                 weaponsTableBody.appendChild(row);
             });
             
-            // Add event listeners for edit and delete buttons
+            // Add event listeners to row action buttons
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = parseInt(this.getAttribute('data-id'));
@@ -201,137 +549,654 @@
                     deleteWeapon(id);
                 });
             });
-        }
-
-        // Apply filters
-        function applyFilters() {
-            let filteredWeapons = weapons;
             
-            // Search filter
-            const searchTerm = searchWeapons.value.toLowerCase();
-            if (searchTerm) {
-                filteredWeapons = filteredWeapons.filter(weapon => 
-                    weapon.name.toLowerCase().includes(searchTerm) ||
-                    weapon.type.toLowerCase().includes(searchTerm) ||
-                    weapon.serialNumber.toLowerCase().includes(searchTerm) ||
-                    weapon.status.toLowerCase().includes(searchTerm) ||
-                    (weapon.assignedTo && weapon.assignedTo.toLowerCase().includes(searchTerm))
-                );
-            }
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    viewWeapon(id);
+                });
+            });
             
-            // Type filter
-            const typeFilter = weaponTypeFilter.value;
-            if (typeFilter) {
-                filteredWeapons = filteredWeapons.filter(weapon => 
-                    weapon.type === typeFilter
-                );
-            }
-            
-            // Status filter
-            const statusValue = statusFilter.value;
-            if (statusValue) {
-                filteredWeapons = filteredWeapons.filter(weapon => 
-                    weapon.status === statusValue
-                );
-            }
-            
-            // Assignment filter
-            const assignmentValue = assignmentFilter.value;
-            if (assignmentValue === 'assigned') {
-                filteredWeapons = filteredWeapons.filter(weapon => 
-                    weapon.assignedTo && weapon.assignedTo.trim() !== ''
-                );
-            } else if (assignmentValue === 'unassigned') {
-                filteredWeapons = filteredWeapons.filter(weapon => 
-                    !weapon.assignedTo || weapon.assignedTo.trim() === ''
-                );
-            }
-            
-            renderWeaponsTable(filteredWeapons);
-        }
-
-        // Update search functionality to use applyFilters
-        searchWeapons.addEventListener('input', applyFilters);
-
-        // Add event listeners for filters
-        weaponTypeFilter.addEventListener('change', applyFilters);
-        statusFilter.addEventListener('change', applyFilters);
-        assignmentFilter.addEventListener('change', applyFilters);
-
-        // Clear filters
-        clearFiltersBtn.addEventListener('click', function() {
-            searchWeapons.value = '';
-            weaponTypeFilter.value = '';
-            statusFilter.value = '';
-            assignmentFilter.value = '';
-            renderWeaponsTable();
-        });
-
-        // Show add weapon modal
-        addWeaponBtn.addEventListener('click', function() {
-            modalTitle.textContent = 'Add New Weapon';
-            weaponForm.reset();
-            weaponIdInput.value = '';
-            weaponModal.classList.remove('hidden');
-        });
-
-        // Cancel button in modal
-        cancelWeaponBtn.addEventListener('click', function() {
-            weaponModal.classList.add('hidden');
-        });
-
-        // Form submission
-        weaponForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const id = weaponIdInput.value ? parseInt(weaponIdInput.value) : weapons.length > 0 ? Math.max(...weapons.map(w => w.id)) + 1 : 1;
-            const name = document.getElementById('weaponName').value;
-            const type = document.getElementById('weaponType').value;
-            const serialNumber = document.getElementById('serialNumber').value;
-            const status = document.getElementById('status').value;
-            const assignedTo = document.getElementById('assignedTo').value;
-            
-            if (weaponIdInput.value) {
-                // Edit existing weapon
-                const index = weapons.findIndex(w => w.id === parseInt(weaponIdInput.value));
-                if (index !== -1) {
-                    weapons[index] = { id, name, type, serialNumber, status, assignedTo };
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    if (this.checked) {
+                        if (!selectedItems.includes(id)) {
+                            selectedItems.push(id);
+                        }
+                    } else {
+                        selectedItems = selectedItems.filter(itemId => itemId !== id);
+                    }
+                    updateBulkActionsBar();
+                });
+                
+                // Check the checkbox if item is selected
+                const id = parseInt(checkbox.getAttribute('data-id'));
+                if (selectedItems.includes(id)) {
+                    checkbox.checked = true;
                 }
+            });
+            
+            // Update the "select all" checkbox
+            updateSelectAllCheckbox();
+        }
+        
+        // Apply filters function
+        function applyFilters() {
+            const searchText = searchWeapons.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const statusValue = statusFilter.value;
+            const locationValue = locationFilter.value;
+            const conditionValue = conditionFilter.value;
+            
+            // Reset to first page when filtering
+            currentPage = 1;
+            
+            // Filter the weapons array based on selected criteria
+            const filteredWeapons = weapons.filter(weapon => {
+                // Check if weapon matches search text in any field
+                const matchesSearch = searchText === '' || 
+                    weapon.type.toLowerCase().includes(searchText) ||
+                    weapon.model.toLowerCase().includes(searchText) ||
+                    weapon.serialNumber.toLowerCase().includes(searchText) ||
+                    weapon.status.toLowerCase().includes(searchText) ||
+                    weapon.location.toLowerCase().includes(searchText) ||
+                    weapon.condition.toLowerCase().includes(searchText) ||
+                    (weapon.notes && weapon.notes.toLowerCase().includes(searchText));
+                
+                // Check if weapon matches selected filters
+                const matchesType = typeValue === '' || weapon.type === typeValue;
+                const matchesStatus = statusValue === '' || weapon.status === statusValue;
+                const matchesLocation = locationValue === '' || weapon.location === locationValue;
+                const matchesCondition = conditionValue === '' || weapon.condition === conditionValue;
+                
+                // Return true only if all criteria match
+                return matchesSearch && matchesType && matchesStatus && matchesLocation && matchesCondition;
+            });
+            
+            // Render the filtered table
+            renderWeaponsTable(filteredWeapons);
+            
+            // Update chart data
+            updateCharts(filteredWeapons);
+            
+            // Show/hide filter active indicator
+            const isFiltered = typeValue !== '' || statusValue !== '' || locationValue !== '' || conditionValue !== '' || searchText !== '';
+            filtersToggle.classList.toggle('bg-blue-600', isFiltered);
+            filtersToggle.classList.toggle('bg-gray-800', !isFiltered);
+            
+            // Update filter count if any filters are applied
+            const activeFilterCount = [typeValue, statusValue, locationValue, conditionValue].filter(val => val !== '').length + (searchText !== '' ? 1 : 0);
+            
+            // If filters are active, show a badge with count
+            if (activeFilterCount > 0) {
+                let filterBadge = document.getElementById('filterBadge');
+                if (!filterBadge) {
+                    filterBadge = document.createElement('span');
+                    filterBadge.id = 'filterBadge';
+                    filterBadge.className = 'ml-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full';
+                    filtersToggle.appendChild(filterBadge);
+                }
+                filterBadge.textContent = activeFilterCount;
             } else {
-                // Add new weapon
-                weapons.push({ id, name, type, serialNumber, status, assignedTo });
+                const filterBadge = document.getElementById('filterBadge');
+                if (filterBadge) {
+                    filterBadge.remove();
+                }
+            }
+        }
+
+        // Clear filters function
+        function clearFilters() {
+            searchWeapons.value = '';
+            typeFilter.value = '';
+            statusFilter.value = '';
+            locationFilter.value = '';
+            conditionFilter.value = '';
+            
+            // Reset to first page
+            currentPage = 1;
+            
+            // Render the original table
+            renderWeaponsTable();
+            
+            // Update charts with all data
+            updateCharts(weapons);
+            
+            // Remove active filter styling
+            filtersToggle.classList.remove('bg-blue-600');
+            filtersToggle.classList.add('bg-gray-800');
+            
+            // Remove filter badge if exists
+            const filterBadge = document.getElementById('filterBadge');
+            if (filterBadge) {
+                filterBadge.remove();
+            }
+        }
+
+        // Function to handle bulk actions
+        function updateBulkActionsBar() {
+            selectedCountSpan.textContent = selectedItems.length;
+            
+            if (selectedItems.length > 0) {
+                bulkActionsBar.classList.remove('hidden');
+            } else {
+                bulkActionsBar.classList.add('hidden');
             }
             
-            applyFilters(); // Apply current filters to the updated data
-            weaponModal.classList.add('hidden');
-        });
+            // Update the select all checkbox
+            updateSelectAllCheckbox();
+        }
 
-        // Edit weapon
+        // Update the select all checkbox state
+        function updateSelectAllCheckbox() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            
+            if (checkboxes.length > 0) {
+                selectAllCheckbox.checked = checkboxes.length === checkedCheckboxes.length;
+                selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < checkboxes.length;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        // Function to handle select all checkbox
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const isChecked = selectAllCheckbox.checked;
+            
+            selectedItems = [];
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+                
+                if (isChecked) {
+                    const id = parseInt(checkbox.getAttribute('data-id'));
+                    selectedItems.push(id);
+                }
+            });
+            
+            updateBulkActionsBar();
+        }
+
+        // Create charts for visualizations
+        function createCharts() {
+            // Group weapons by type
+            const weaponsByType = weapons.reduce((acc, weapon) => {
+                acc[weapon.type] = (acc[weapon.type] || 0) + 1;
+                return acc;
+            }, {});
+            
+            // Group weapons by status
+            const weaponsByStatus = weapons.reduce((acc, weapon) => {
+                acc[weapon.status] = (acc[weapon.status] || 0) + 1;
+                return acc;
+            }, {});
+            
+            // Create weapon type chart
+            const typeCtx = document.getElementById('weaponTypeChart').getContext('2d');
+            window.weaponTypeChart = new Chart(typeCtx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(weaponsByType),
+                    datasets: [{
+                        data: Object.values(weaponsByType),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: 'rgba(17, 24, 39, 0.8)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Create weapon status chart
+            const statusCtx = document.getElementById('weaponStatusChart').getContext('2d');
+            window.weaponStatusChart = new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(weaponsByStatus),
+                    datasets: [{
+                        label: 'Number of Weapons',
+                        data: Object.values(weaponsByStatus),
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(59, 130, 246)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'rgb(229, 231, 235)'
+                            },
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgb(229, 231, 235)',
+                                precision: 0
+                            },
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts with filtered data
+        function updateCharts(filteredData) {
+            // Group weapons by type
+            const weaponsByType = filteredData.reduce((acc, weapon) => {
+                acc[weapon.type] = (acc[weapon.type] || 0) + 1;
+                return acc;
+            }, {});
+            
+            // Group weapons by status
+            const weaponsByStatus = filteredData.reduce((acc, weapon) => {
+                acc[weapon.status] = (acc[weapon.status] || 0) + 1;
+                return acc;
+            }, {});
+            
+            // Update type chart
+            if (window.weaponTypeChart) {
+                window.weaponTypeChart.data.labels = Object.keys(weaponsByType);
+                window.weaponTypeChart.data.datasets[0].data = Object.values(weaponsByType);
+                window.weaponTypeChart.update();
+            }
+            
+            // Update status chart
+            if (window.weaponStatusChart) {
+                window.weaponStatusChart.data.labels = Object.keys(weaponsByStatus);
+                window.weaponStatusChart.data.datasets[0].data = Object.values(weaponsByStatus);
+                window.weaponStatusChart.update();
+            }
+        }
+
+        // Add/Edit weapon function
         function editWeapon(id) {
             const weapon = weapons.find(w => w.id === id);
-            if (weapon) {
-                modalTitle.textContent = 'Edit Weapon';
-                weaponIdInput.value = weapon.id;
-                document.getElementById('weaponName').value = weapon.name;
-                document.getElementById('weaponType').value = weapon.type;
-                document.getElementById('serialNumber').value = weapon.serialNumber;
-                document.getElementById('status').value = weapon.status;
-                document.getElementById('assignedTo').value = weapon.assignedTo || '';
-                
-                weaponModal.classList.remove('hidden');
-            }
+            
+            // Populate form fields
+            weaponIdInput.value = weapon.id;
+            document.getElementById('weaponType').value = weapon.type;
+            document.getElementById('weaponModel').value = weapon.model;
+            document.getElementById('serialNumber').value = weapon.serialNumber;
+            document.getElementById('weaponStatus').value = weapon.status;
+            document.getElementById('weaponLocation').value = weapon.location;
+            document.getElementById('weaponCondition').value = weapon.condition;
+            document.getElementById('notes').value = weapon.notes || '';
+            
+            // Update modal title
+            modalTitle.innerHTML = `<i class="fas fa-edit text-blue-500 mr-2"></i> Edit Weapon`;
+            
+            // Show modal
+            weaponModal.classList.remove('hidden');
         }
 
-        // Delete weapon
+        // Delete weapon function
         function deleteWeapon(id) {
             if (confirm('Are you sure you want to delete this weapon?')) {
                 weapons = weapons.filter(w => w.id !== id);
-                applyFilters(); // Apply current filters to the updated data
+                renderWeaponsTable();
+                updateCharts(weapons);
+                
+                // Show success notification
+                showNotification('Weapon deleted successfully', 'success');
             }
         }
 
-        // Initial render
-        renderWeaponsTable();
+        // View weapon details
+        function viewWeapon(id) {
+            const weapon = weapons.find(w => w.id === id);
+            
+            // You could show a read-only modal or create a dedicated view page
+            alert(`
+                ID: ${weapon.id}
+                Type: ${weapon.type}
+                Model: ${weapon.model}
+                Serial Number: ${weapon.serialNumber}
+                Status: ${weapon.status}
+                Location: ${weapon.location}
+                Condition: ${weapon.condition}
+                Notes: ${weapon.notes || 'N/A'}
+            `);
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notificationContainer = document.createElement('div');
+            
+            let bgColor, icon;
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-green-600';
+                    icon = 'fa-check-circle';
+                    break;
+                case 'warning':
+                    bgColor = 'bg-yellow-500';
+                    icon = 'fa-exclamation-triangle';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-600';
+                    icon = 'fa-times-circle';
+                    break;
+                default:
+                    bgColor = 'bg-blue-600';
+                    icon = 'fa-info-circle';
+            }
+            
+            notificationContainer.className = `${bgColor} text-white p-4 rounded-lg shadow-lg flex items-start mb-4 transform transition-all duration-500 ease-in-out opacity-0 translate-x-full`;
+            notificationContainer.innerHTML = `
+                <div class="mr-3 text-xl">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="flex-grow">
+                    ${message}
+                </div>
+                <button class="text-white ml-4 focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add to DOM
+            const notificationsArea = document.createElement('div');
+            notificationsArea.id = 'notifications-area';
+            notificationsArea.className = 'fixed top-20 right-4 w-80 z-50 space-y-2';
+            document.body.appendChild(notificationsArea);
+            
+            notificationsArea.appendChild(notificationContainer);
+            
+            // Animate in
+            setTimeout(() => {
+                notificationContainer.classList.remove('opacity-0', 'translate-x-full');
+            }, 10);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notificationContainer.classList.add('opacity-0', 'translate-x-full');
+                
+                // Remove from DOM after animation completes
+                setTimeout(() => {
+                    if (notificationContainer.parentNode) {
+                        notificationContainer.parentNode.removeChild(notificationContainer);
+                    }
+                    
+                    // Remove notification area if empty
+                    if (notificationsArea.children.length === 0) {
+                        notificationsArea.remove();
+                    }
+                }, 500);
+            }, 5000);
+            
+            // Close button handler
+            notificationContainer.querySelector('button').addEventListener('click', () => {
+                notificationContainer.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    if (notificationContainer.parentNode) {
+                        notificationContainer.parentNode.removeChild(notificationContainer);
+                    }
+                    
+                    if (notificationsArea.children.length === 0) {
+                        notificationsArea.remove();
+                    }
+                }, 500);
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial render
+            renderWeaponsTable();
+            createCharts();
+            
+            // Search input
+            searchWeapons.addEventListener('input', applyFilters);
+            
+            // Filter dropdowns
+            typeFilter.addEventListener('change', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            locationFilter.addEventListener('change', applyFilters);
+            conditionFilter.addEventListener('change', applyFilters);
+            
+            // Clear filters button
+            clearFiltersBtn.addEventListener('click', clearFilters);
+            
+            // Select all checkbox
+            selectAllCheckbox.addEventListener('change', toggleSelectAll);
+            
+            // Pagination buttons
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderWeaponsTable(
+                        applyFiltersCriteria(weapons)
+                    );
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', () => {
+                const filteredWeapons = applyFiltersCriteria(weapons);
+                const totalPages = Math.ceil(filteredWeapons.length / itemsPerPage);
+                
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderWeaponsTable(filteredWeapons);
+                }
+            });
+            
+            // Modal open button
+            addWeaponBtn.addEventListener('click', () => {
+                // Reset the form
+                weaponForm.reset();
+                weaponIdInput.value = '';
+                
+                // Update modal title
+                modalTitle.innerHTML = `<i class="fas fa-plus text-blue-500 mr-2"></i> Add New Weapon`;
+                
+                // Show modal
+                weaponModal.classList.remove('hidden');
+            });
+            
+            // Modal close buttons
+            closeModalBtn.addEventListener('click', () => {
+                weaponModal.classList.add('hidden');
+            });
+            
+            cancelWeaponBtn.addEventListener('click', () => {
+                weaponModal.classList.add('hidden');
+            });
+            
+            // Form submission
+            weaponForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const id = weaponIdInput.value ? parseInt(weaponIdInput.value) : weapons.length + 1;
+                const type = document.getElementById('weaponType').value;
+                const model = document.getElementById('weaponModel').value;
+                const serialNumber = document.getElementById('serialNumber').value;
+                const status = document.getElementById('weaponStatus').value;
+                const location = document.getElementById('weaponLocation').value;
+                const condition = document.getElementById('weaponCondition').value;
+                const notes = document.getElementById('notes').value;
+                
+                // Create weapon object
+                const weaponData = {
+                    id,
+                    type,
+                    model,
+                    serialNumber,
+                    status,
+                    location,
+                    condition,
+                    notes
+                };
+                
+                // Add or update weapon
+                if (weaponIdInput.value) {
+                    // Update existing weapon
+                    const index = weapons.findIndex(w => w.id === parseInt(id));
+                    weapons[index] = weaponData;
+                    showNotification('Weapon updated successfully', 'success');
+                } else {
+                    // Add new weapon
+                    weapons.push(weaponData);
+                    showNotification('Weapon added successfully', 'success');
+                }
+                
+                // Hide modal
+                weaponModal.classList.add('hidden');
+                
+                // Re-render table and charts
+                renderWeaponsTable();
+                updateCharts(weapons);
+                
+                // Update dashboard stats
+                updateDashboardStats();
+            });
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Simulate a refresh with a spinning animation
+                this.classList.add('animate-spin');
+                
+                setTimeout(() => {
+                    renderWeaponsTable();
+                    updateCharts(weapons);
+                    updateDashboardStats();
+                    this.classList.remove('animate-spin');
+                    showNotification('Data refreshed', 'success');
+                    
+                    // Update last updated time
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('lastUpdated').textContent = `Today, ${timeString}`;
+                }, 600);
+            });
+            
+            // Handle bulk action buttons
+            document.getElementById('bulkDeleteBtn').addEventListener('click', () => {
+                if (selectedItems.length === 0) return;
+                
+                if (confirm(`Are you sure you want to delete ${selectedItems.length} weapons?`)) {
+                    weapons = weapons.filter(w => !selectedItems.includes(w.id));
+                    selectedItems = [];
+                    renderWeaponsTable();
+                    updateCharts(weapons);
+                    updateDashboardStats();
+                    updateBulkActionsBar();
+                    showNotification(`${selectedItems.length} weapons deleted successfully`, 'success');
+                }
+            });
+            
+            // Update dashboard stats on load
+            updateDashboardStats();
+        });
+
+        // Helper function to apply filter criteria without re-rendering
+        function applyFiltersCriteria(weaponsArr) {
+            const searchText = searchWeapons.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const statusValue = statusFilter.value;
+            const locationValue = locationFilter.value;
+            const conditionValue = conditionFilter.value;
+            
+            return weaponsArr.filter(weapon => {
+                // Check if weapon matches search text in any field
+                const matchesSearch = searchText === '' || 
+                    weapon.type.toLowerCase().includes(searchText) ||
+                    weapon.model.toLowerCase().includes(searchText) ||
+                    weapon.serialNumber.toLowerCase().includes(searchText) ||
+                    weapon.status.toLowerCase().includes(searchText) ||
+                    weapon.location.toLowerCase().includes(searchText) ||
+                    weapon.condition.toLowerCase().includes(searchText) ||
+                    (weapon.notes && weapon.notes.toLowerCase().includes(searchText));
+                
+                // Check if weapon matches selected filters
+                const matchesType = typeValue === '' || weapon.type === typeValue;
+                const matchesStatus = statusValue === '' || weapon.status === statusValue;
+                const matchesLocation = locationValue === '' || weapon.location === locationValue;
+                const matchesCondition = conditionValue === '' || weapon.condition === conditionValue;
+                
+                // Return true only if all criteria match
+                return matchesSearch && matchesType && matchesStatus && matchesLocation && matchesCondition;
+            });
+        }
+
+        // Update dashboard stats
+        function updateDashboardStats() {
+            // Count weapons by status
+            const activeWeapons = weapons.filter(w => w.status === 'Active').length;
+            const maintenanceNeeded = weapons.filter(w => w.status === 'Maintenance').length;
+            
+            // Update stats
+            document.getElementById('totalWeapons').textContent = weapons.length;
+            document.getElementById('activeWeapons').textContent = activeWeapons;
+            document.getElementById('maintenanceNeeded').textContent = maintenanceNeeded;
+        }
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-auto">
+        <div class="container mx-auto py-6 px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-shield-alt text-blue-500 text-xl mr-2"></i>
+                    <p>© 2025 Army Weapons Management System</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm text-gray-500">
+                <p>Version 2.3.0 | Last Updated: March 27, 2025</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

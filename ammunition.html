@@ -544,6 +544,453 @@
 
         // Initial render
         renderAmmoTable();
+
+        // Add this to your existing script section
+
+        // DOM elements for filter toggle functionality
+        const filtersToggle = document.getElementById('filtersToggle');
+        const filtersPanel = document.getElementById('filtersPanel');
+        const filterChevron = document.getElementById('filterChevron');
+
+        // Toggle filters panel visibility
+        filtersToggle.addEventListener('click', function() {
+            // Toggle visibility of filters panel
+            filtersPanel.classList.toggle('hidden');
+            
+            // Rotate chevron icon when toggled
+            if (filtersPanel.classList.contains('hidden')) {
+                filterChevron.classList.remove('transform', 'rotate-180');
+            } else {
+                filterChevron.classList.add('transform', 'rotate-180');
+            }
+        });
+
+        // Enhanced filter application with visual indicator
+        function applyFilters() {
+            let filteredAmmo = ammunition;
+            
+            // Search filter
+            const searchTerm = searchAmmo.value.toLowerCase();
+            if (searchTerm) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.type.toLowerCase().includes(searchTerm) ||
+                    ammo.caliber.toLowerCase().includes(searchTerm) ||
+                    ammo.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Caliber filter
+            const caliberValue = caliberFilter.value;
+            if (caliberValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.caliber === caliberValue
+                );
+            }
+            
+            // Location filter
+            const locationValue = locationFilter.value;
+            if (locationValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.location === locationValue
+                );
+            }
+            
+            // Expiry filter
+            const expiryValue = expiryFilter.value;
+            if (expiryValue) {
+                const today = new Date();
+                const sixMonthsFromNow = new Date();
+                sixMonthsFromNow.setMonth(today.getMonth() + 6);
+                
+                if (expiryValue === 'soon') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate <= sixMonthsFromNow;
+                    });
+                } else if (expiryValue === 'future') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate > sixMonthsFromNow;
+                    });
+                }
+            }
+            
+            // Quantity filter
+            const quantityValue = quantityFilter.value;
+            if (quantityValue) {
+                if (quantityValue === 'low') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity < 500);
+                } else if (quantityValue === 'medium') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity >= 500 && ammo.quantity <= 1000);
+                } else if (quantityValue === 'high') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity > 1000);
+                }
+            }
+            
+            renderAmmoTable(filteredAmmo);
+            
+            // Visual indicator for active filters
+            const isFiltered = searchTerm || caliberValue || locationValue || expiryValue || quantityValue;
+            
+            // Change filter button appearance when filters are active
+            if (isFiltered) {
+                filtersToggle.classList.remove('bg-gray-800');
+                filtersToggle.classList.add('bg-blue-600');
+                
+                // Add or update filter badge with count of active filters
+                const activeFilters = [caliberValue, locationValue, expiryValue, quantityValue].filter(Boolean).length + (searchTerm ? 1 : 0);
+                
+                let filterBadge = document.getElementById('filterBadge');
+                if (!filterBadge && activeFilters > 0) {
+                    filterBadge = document.createElement('span');
+                    filterBadge.id = 'filterBadge';
+                    filterBadge.className = 'ml-2 bg-white text-blue-600 text-xs px-2 py-0.5 rounded-full font-bold';
+                    filtersToggle.appendChild(filterBadge);
+                }
+                
+                if (filterBadge) {
+                    filterBadge.textContent = activeFilters;
+                }
+            } else {
+                filtersToggle.classList.add('bg-gray-800');
+                filtersToggle.classList.remove('bg-blue-600');
+                
+                // Remove badge when no filters are active
+                const filterBadge = document.getElementById('filterBadge');
+                if (filterBadge) {
+                    filterBadge.remove();
+                }
+            }
+        }
+
+        // Enhanced clear filters with visual updates
+        clearFiltersBtn.addEventListener('click', function() {
+            searchAmmo.value = '';
+            caliberFilter.value = '';
+            locationFilter.value = '';
+            expiryFilter.value = '';
+            quantityFilter.value = '';
+            
+            renderAmmoTable();
+            
+            // Reset filter button appearance
+            filtersToggle.classList.add('bg-gray-800');
+            filtersToggle.classList.remove('bg-blue-600');
+            
+            // Remove badge
+            const filterBadge = document.getElementById('filterBadge');
+            if (filterBadge) {
+                filterBadge.remove();
+            }
+        });
+
+        // Add event listener for quantity filter
+        document.getElementById('quantityFilter').addEventListener('change', applyFilters);
+
+        // Replace existing applyFilters function references with this enhanced version
+        searchAmmo.addEventListener('input', applyFilters);
+        caliberFilter.addEventListener('change', applyFilters);
+        locationFilter.addEventListener('change', applyFilters);
+        expiryFilter.addEventListener('change', applyFilters);
+
+        // Initialize and create charts
+        function createAmmoCharts() {
+            // Group ammunition by caliber for pie chart
+            const ammoByCaliberData = {};
+            ammunition.forEach(ammo => {
+                if (!ammoByCaliberData[ammo.caliber]) {
+                    ammoByCaliberData[ammo.caliber] = 0;
+                }
+                ammoByCaliberData[ammo.caliber]++;
+            });
+            
+            // Group ammunition by location for bar chart
+            const ammoByLocationData = {};
+            ammunition.forEach(ammo => {
+                if (!ammoByLocationData[ammo.location]) {
+                    ammoByLocationData[ammo.location] = 0;
+                }
+                ammoByLocationData[ammo.location] += ammo.quantity;
+            });
+            
+            // Create ammunition by caliber chart (pie chart)
+            const ammoTypeChartCtx = document.getElementById('ammoTypeChart').getContext('2d');
+            window.ammoTypeChart = new Chart(ammoTypeChartCtx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(ammoByCaliberData),
+                    datasets: [{
+                        data: Object.values(ammoByCaliberData),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)', // blue
+                            'rgba(16, 185, 129, 0.8)', // green
+                            'rgba(245, 158, 11, 0.8)', // yellow
+                            'rgba(239, 68, 68, 0.8)',  // red
+                            'rgba(139, 92, 246, 0.8)'  // purple
+                        ],
+                        borderColor: 'rgba(17, 24, 39, 0.8)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Create ammunition by location chart (bar chart)
+            const locationChartCtx = document.getElementById('locationChart').getContext('2d');
+            window.locationChart = new Chart(locationChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(ammoByLocationData),
+                    datasets: [{
+                        label: 'Rounds Available',
+                        data: Object.values(ammoByLocationData),
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)', // green
+                            'rgba(59, 130, 246, 0.8)', // blue
+                            'rgba(245, 158, 11, 0.8)'  // yellow
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(59, 130, 246)',
+                            'rgb(245, 158, 11)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'rgb(229, 231, 235)'
+                            },
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgb(229, 231, 235)'
+                            },
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts when data changes
+        function updateAmmoCharts(filteredAmmo = ammunition) {
+            // Update total counts in status cards
+            document.getElementById('totalAmmoTypes').textContent = [...new Set(filteredAmmo.map(a => a.type))].length;
+            
+            const totalRounds = filteredAmmo.reduce((sum, ammo) => sum + ammo.quantity, 0);
+            document.getElementById('totalAmmoCount').textContent = totalRounds.toLocaleString();
+            
+            // Count expiring soon items
+            const today = new Date();
+            const sixMonthsFromNow = new Date();
+            sixMonthsFromNow.setMonth(today.getMonth() + 6);
+            
+            const expiringSoon = filteredAmmo.filter(ammo => {
+                const expiryDate = new Date(ammo.expiryDate);
+                return expiryDate <= sixMonthsFromNow;
+            }).length;
+            
+            document.getElementById('expiringSoon').textContent = expiringSoon;
+            
+            // Only update charts if they exist
+            if (window.ammoTypeChart && window.locationChart) {
+                // Group ammunition by caliber for pie chart
+                const ammoByCaliberData = {};
+                filteredAmmo.forEach(ammo => {
+                    if (!ammoByCaliberData[ammo.caliber]) {
+                        ammoByCaliberData[ammo.caliber] = 0;
+                    }
+                    ammoByCaliberData[ammo.caliber]++;
+                });
+                
+                // Group ammunition by location for bar chart
+                const ammoByLocationData = {};
+                filteredAmmo.forEach(ammo => {
+                    if (!ammoByLocationData[ammo.location]) {
+                        ammoByLocationData[ammo.location] = 0;
+                    }
+                    ammoByLocationData[ammo.location] += ammo.quantity;
+                });
+                
+                // Update ammunition type chart
+                window.ammoTypeChart.data.labels = Object.keys(ammoByCaliberData);
+                window.ammoTypeChart.data.datasets[0].data = Object.values(ammoByCaliberData);
+                window.ammoTypeChart.update();
+                
+                // Update location chart
+                window.locationChart.data.labels = Object.keys(ammoByLocationData);
+                window.locationChart.data.datasets[0].data = Object.values(ammoByLocationData);
+                window.locationChart.update();
+            }
+        }
+
+        // Modify the applyFilters function to update charts
+        function applyFilters() {
+            let filteredAmmo = ammunition;
+            
+            // Search filter
+            const searchTerm = searchAmmo.value.toLowerCase();
+            if (searchTerm) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.type.toLowerCase().includes(searchTerm) ||
+                    ammo.caliber.toLowerCase().includes(searchTerm) ||
+                    ammo.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Caliber filter
+            const caliberValue = caliberFilter.value;
+            if (caliberValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.caliber === caliberValue
+                );
+            }
+            
+            // Location filter
+            const locationValue = locationFilter.value;
+            if (locationValue) {
+                filteredAmmo = filteredAmmo.filter(ammo => 
+                    ammo.location === locationValue
+                );
+            }
+            
+            // Expiry filter
+            const expiryValue = expiryFilter.value;
+            if (expiryValue) {
+                const today = new Date();
+                const sixMonthsFromNow = new Date();
+                sixMonthsFromNow.setMonth(today.getMonth() + 6);
+                
+                if (expiryValue === 'soon') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate <= sixMonthsFromNow;
+                    });
+                } else if (expiryValue === 'future') {
+                    filteredAmmo = filteredAmmo.filter(ammo => {
+                        const expiryDate = new Date(ammo.expiryDate);
+                        return expiryDate > sixMonthsFromNow;
+                    });
+                }
+            }
+            
+            // Quantity filter
+            const quantityValue = quantityFilter.value;
+            if (quantityValue) {
+                if (quantityValue === 'low') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity < 500);
+                } else if (quantityValue === 'medium') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity >= 500 && ammo.quantity <= 1000);
+                } else if (quantityValue === 'high') {
+                    filteredAmmo = filteredAmmo.filter(ammo => ammo.quantity > 1000);
+                }
+            }
+            
+            renderAmmoTable(filteredAmmo);
+            updateAmmoCharts(filteredAmmo);
+            
+            // Visual indicator for active filters
+            const isFiltered = searchTerm || caliberValue || locationValue || expiryValue || quantityValue;
+            
+            // Change filter button appearance when filters are active
+            if (isFiltered) {
+                filtersToggle.classList.remove('bg-gray-800');
+                filtersToggle.classList.add('bg-blue-600');
+                
+                // Add or update filter badge with count of active filters
+                const activeFilters = [caliberValue, locationValue, expiryValue, quantityValue].filter(Boolean).length + (searchTerm ? 1 : 0);
+                
+                let filterBadge = document.getElementById('filterBadge');
+                if (!filterBadge && activeFilters > 0) {
+                    filterBadge = document.createElement('span');
+                    filterBadge.id = 'filterBadge';
+                    filterBadge.className = 'ml-2 bg-white text-blue-600 text-xs px-2 py-0.5 rounded-full font-bold';
+                    filtersToggle.appendChild(filterBadge);
+                }
+                
+                if (filterBadge) {
+                    filterBadge.textContent = activeFilters;
+                }
+            } else {
+                filtersToggle.classList.add('bg-gray-800');
+                filtersToggle.classList.remove('bg-blue-600');
+                
+                // Remove badge when no filters are active
+                const filterBadge = document.getElementById('filterBadge');
+                if (filterBadge) {
+                    filterBadge.remove();
+                }
+            }
+        }
+
+        // Add these functions to DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create initial charts
+            createAmmoCharts();
+            
+            // Update dashboard stats and charts on initial load
+            updateAmmoCharts();
+            
+            // Set up refresh button
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    this.classList.add('animate-spin');
+                    
+                    setTimeout(() => {
+                        renderAmmoTable();
+                        updateAmmoCharts();
+                        
+                        // Update last updated time
+                        const now = new Date();
+                        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        document.getElementById('lastUpdated').textContent = `Today, ${timeString}`;
+                        
+                        this.classList.remove('animate-spin');
+                    }, 600); // Short delay for animation
+                });
+            }
+        });
     </script>
 </body>
 </html>
