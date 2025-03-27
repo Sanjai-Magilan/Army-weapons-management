@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,96 +8,161 @@
 </head>
 <body class="bg-gray-900 text-white">
     
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between">
-        <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+    <!-- Modernized Navbar with active state and icons -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        </div>
         <ul class="flex space-x-4 ml-auto">
-            <li><a href="Dashboard.html" class="hover:text-gray-300">Dashboard</a></li>
-            <li><a href="weapons.html" class="hover:text-gray-300">Weapons</a></li>
-            <li><a href="ammunition.html" class="hover:text-gray-300">Ammunition</a></li>
-            <li><a href="personnel.html" class="hover:text-gray-300">Personnel</a></li>
-            <li><a href="storage.html" class="hover:text-gray-300">Storage</a></li>
-            <li><a href="logs.html" class="hover:text-gray-300 font-bold">Logs</a></li>
+            <li><a href="Dashboard.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-chart-line mr-1"></i> Dashboard</a></li>
+            <li><a href="weapons.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-gun mr-1"></i> Weapons</a></li>
+            <li><a href="ammunition.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-box-open mr-1"></i> Ammunition</a></li>
+            <li><a href="personnel.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-users mr-1"></i> Personnel</a></li>
+            <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
+            <li><a href="logs.html" class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
         </ul>
+        <div class="ml-4 relative group">
+            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
+                <span class="ml-2">Admin</span>
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            </div>
+        </div>
     </nav>
     
-    <!-- Logs Management -->
-    <section id="logs" class="p-6">
-        <h2 class="text-3xl font-bold mb-6">Activity Logs</h2>
-        
-        <!-- Search and Add Section -->
-        <div class="flex justify-between mb-6">
-            <div class="w-1/3">
-                <input type="text" id="searchLogs" placeholder="Search logs..." 
-                    class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <button id="addLogBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
-                Add New Log Entry
-            </button>
-        </div>
-        
-        <!-- Filter Controls - Fix vertical alignment -->
-        <div class="flex justify-between mb-6">
-            <div class="flex space-x-4">
-                <div>
-                    <label for="logDateFilter" class="block mb-1">Filter by Date:</label>
-                    <input type="date" id="logDateFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600 w-48">
-                </div>
-                <div>
-                    <label for="logTypeFilter" class="block mb-1">Filter by Type:</label>
-                    <select id="logTypeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                        <option value="">All Types</option>
-                        <option value="Checkout">Checkout</option>
-                        <option value="Return">Return</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Inspection">Inspection</option>
-                        <option value="Incident">Incident</option>
-                    </select>
-                </div>
-            </div>
-            <div> 
-                <label class="invisible block mb-1">Action</label> 
-                <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
-                    Clear Filters
+    <!-- Enhanced Logs Header with Statistics -->
+    <section id="logs" class="p-6 flex-grow">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold">Activity Logs</h2>
+            <div class="flex items-center">
+                <span class="text-gray-400 mr-2">Last updated:</span>
+                <span id="lastUpdated">Today, 10:30 AM</span>
+                <button id="refreshBtn" class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 rounded-full">
+                    <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
         </div>
         
-        <!-- Logs Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="py-3 px-4 text-left">ID</th>
-                        <th class="py-3 px-4 text-left">Date & Time</th>
-                        <th class="py-3 px-4 text-left">Type</th>
-                        <th class="py-3 px-4 text-left">Item</th>
-                        <th class="py-3 px-4 text-left">Personnel</th>
-                        <th class="py-3 px-4 text-left">Description</th>
-                        <th class="py-3 px-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="logsTableBody">
-                    <!-- Sample data, will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </section>
-    
-    <!-- Add/Edit Log Modal -->
-    <div id="logModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 p-6 rounded-lg w-1/2">
-            <h3 id="modalTitle" class="text-xl font-bold mb-4">Add New Log Entry</h3>
-            <form id="logForm">
-                <input type="hidden" id="logId">
-                <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Activity Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
+                <div class="flex justify-between items-center">
                     <div>
-                        <label for="logDateTime" class="block mb-1">Date & Time</label>
-                        <input type="datetime-local" id="logDateTime" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-300">Total Logs</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalLogs">3</p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-clipboard-list text-3xl text-blue-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-green-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Checkouts</h3>
+                        <p class="text-3xl font-bold mt-2" id="checkoutCount">1</p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-sign-out-alt text-3xl text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-yellow-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Maintenance</h3>
+                        <p class="text-3xl font-bold mt-2" id="maintenanceCount">1</p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-tools text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-red-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Today's Logs</h3>
+                        <p class="text-3xl font-bold mt-2" id="todayLogs">0</p>
+                    </div>
+                    <div class="bg-red-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-calendar-day text-3xl text-red-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Log Analytics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-blue-400"></i>
+                    Activity by Type
+                </h3>
+                <div class="h-64">
+                    <canvas id="logTypeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-green-400"></i>
+                    Activity Timeline
+                </h3>
+                <div class="h-64">
+                    <canvas id="logTimelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Search and Filter Controls -->
+        <div class="bg-gray-800 p-5 rounded-lg shadow-lg mb-6">
+            <div class="flex flex-col lg:flex-row justify-between mb-4">
+                <div class="flex-grow lg:mr-4 mb-3 lg:mb-0">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="searchLogs" placeholder="Search logs by type, item, personnel, or description..." 
+                            class="block w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex">
+                    <button id="exportLogsBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center mr-2">
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                    <button id="printLogsBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center mr-2">
+                        <i class="fas fa-print mr-2"></i> Print
+                    </button>
+                    <button id="addLogBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Add Log
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="logDateFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Date Range</label>
+                        <div class="flex">
+                            <input type="date" id="logDateFilterStart" class="w-full p-2 bg-gray-700 rounded-l-md border border-gray-600">
+                            <span class="bg-gray-600 px-2 flex items-center">to</span>
+                            <input type="date" id="logDateFilterEnd" class="w-full p-2 bg-gray-700 rounded-r-md border border-gray-600">
+                        </div>
                     </div>
                     <div>
-                        <label for="logType" class="block mb-1">Type</label>
-                        <select id="logType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="logTypeFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Type</label>
+                        <select id="logTypeFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Types</option>
                             <option value="Checkout">Checkout</option>
                             <option value="Return">Return</option>
                             <option value="Maintenance">Maintenance</option>
@@ -106,21 +171,136 @@
                         </select>
                     </div>
                     <div>
-                        <label for="logItem" class="block mb-1">Item</label>
-                        <input type="text" id="logItem" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
-                    </div>
-                    <div>
-                        <label for="logPersonnel" class="block mb-1">Personnel</label>
-                        <input type="text" id="logPersonnel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
-                    </div>
-                    <div class="col-span-2">
-                        <label for="logDescription" class="block mb-1">Description</label>
-                        <textarea id="logDescription" rows="3" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600"></textarea>
+                        <label for="personnelFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Personnel</label>
+                        <select id="personnelFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Personnel</option>
+                            <!-- Will be populated dynamically -->
+                        </select>
                     </div>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancelLogBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                <div class="mt-4 md:mt-0"> 
+                    <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
+                        <i class="fas fa-times mr-2"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Logs Table with Better Visual Design -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-750">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date & Time</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Item</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Personnel</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
+                            <th class="py-3 px-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody" class="divide-y divide-gray-700">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Table Empty State -->
+            <div id="emptyState" class="hidden py-8 text-center">
+                <div class="mx-auto w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-clipboard-list text-gray-500 text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-400">No logs found</h3>
+                <p class="text-gray-500 mt-1">Try adjusting your filters or add a new log entry</p>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="bg-gray-750 p-3 flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-gray-400 mb-4 sm:mb-0">
+                    Showing <span id="startRange" class="font-semibold mx-1 text-white">1</span> to 
+                    <span id="endRange" class="font-semibold mx-1 text-white">3</span> of 
+                    <span id="totalItems" class="font-semibold mx-1 text-white">3</span> entries
+                </div>
+                <div class="flex">
+                    <button id="prevPageBtn" class="px-3 py-1 bg-gray-800 text-gray-400 rounded-l-md border border-r-0 border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div id="paginationContainer" class="flex">
+                        <!-- Will be populated by JavaScript -->
+                        <button class="px-3 py-1 bg-blue-600 text-white border border-gray-700">1</button>
+                    </div>
+                    <button id="nextPageBtn" class="px-3 py-1 bg-gray-800 text-gray-400 rounded-r-md border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Enhanced Add/Edit Log Modal with Better UX -->
+    <div id="logModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl" id="modalContent">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                <h3 id="modalTitle" class="text-xl font-bold flex items-center">
+                    <i class="fas fa-plus text-blue-500 mr-2"></i>
+                    Add New Log Entry
+                </h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="logForm" class="space-y-6">
+                <input type="hidden" id="logId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="logDateTime" class="block text-sm font-medium text-gray-400 mb-1">
+                            Date & Time <span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" id="logDateTime" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="logType" class="block text-sm font-medium text-gray-400 mb-1">
+                            Type <span class="text-red-500">*</span>
+                        </label>
+                        <select id="logType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="Checkout">Checkout</option>
+                            <option value="Return">Return</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Inspection">Inspection</option>
+                            <option value="Incident">Incident</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="logItem" class="block text-sm font-medium text-gray-400 mb-1">
+                            Item <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="logItem" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="logPersonnel" class="block text-sm font-medium text-gray-400 mb-1">
+                            Personnel <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="logPersonnel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="logDescription" class="block text-sm font-medium text-gray-400 mb-1">
+                            Description <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="logDescription" rows="4" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+                    <button type="button" id="cancelLogBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center">
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
                 </div>
             </form>
         </div>
@@ -263,8 +443,48 @@
                     log.type === typeFilter
                 );
             }
-            
+
+            // Personnel filter
+            const personnelFilter = document.getElementById('personnelFilter').value;
+            if (personnelFilter) {
+                filteredLogs = filteredLogs.filter(log => 
+                    log.personnel === personnelFilter
+                );
+            }
+
+            // Reset to first page
+            currentPage = 1;
+
+            // Update the UI with filtered logs
             renderLogsTable(filteredLogs);
+            updateCharts(filteredLogs);
+
+            // Visual feedback for active filters
+            const filtersActive = searchTerm || startDate || endDate || typeFilter || personnelFilter;
+
+            document.querySelectorAll('.filter-indicator').forEach(el => el.remove());
+
+            if (filtersActive) {
+                const activeFiltersCount = [
+                    searchTerm, 
+                    (startDate || endDate), 
+                    typeFilter, 
+                    personnelFilter
+                ].filter(Boolean).length;
+                
+                // Create filter indicator
+                const indicator = document.createElement('span');
+                indicator.className = 'ml-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full filter-indicator';
+                indicator.textContent = activeFiltersCount;
+                clearFiltersBtn.prepend(indicator);
+                
+                // Add active styling to filters panel
+                clearFiltersBtn.classList.remove('bg-gray-700');
+                clearFiltersBtn.classList.add('bg-blue-600');
+            } else {
+                clearFiltersBtn.classList.add('bg-gray-700');
+                clearFiltersBtn.classList.remove('bg-blue-600');
+            }
         }
 
         // Search functionality
@@ -361,5 +581,783 @@
         // Initial render
         renderLogsTable();
     </script>
-</body>
-</html>
+    <script>
+        // Enhanced JavaScript with better functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pagination state
+            let currentPage = 1;
+            const itemsPerPage = 10;
+            
+            // Format date for display
+            function formatDateTime(dateTimeStr) {
+                const date = new Date(dateTimeStr);
+                return date.toLocaleString(undefined, { 
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        
+            // Get type badge class
+            function getTypeBadgeClass(type) {
+                switch(type) {
+                    case 'Checkout': return 'bg-blue-500 text-white';
+                    case 'Return': return 'bg-green-500 text-white';
+                    case 'Maintenance': return 'bg-yellow-500 text-white';
+                    case 'Inspection': return 'bg-purple-500 text-white';
+                    case 'Incident': return 'bg-red-500 text-white';
+                    default: return 'bg-gray-500 text-white';
+                }
+            }
+        
+            // Get type icon
+            function getTypeIcon(type) {
+                switch(type) {
+                    case 'Checkout': return 'fa-sign-out-alt';
+                    case 'Return': return 'fa-sign-in-alt';
+                    case 'Maintenance': return 'fa-tools';
+                    case 'Inspection': return 'fa-search';
+                    case 'Incident': return 'fa-exclamation-triangle';
+                    default: return 'fa-clipboard-list';
+                }
+            }
+        
+            // Render logs table with pagination
+            function renderLogsTable(logsArray = logs) {
+                const emptyState = document.getElementById('emptyState');
+                
+                // Calculate pagination
+                const totalPages = Math.ceil(logsArray.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, logsArray.length);
+                
+                // Update pagination text
+                document.getElementById('startRange').textContent = logsArray.length > 0 ? startIndex + 1 : 0;
+                document.getElementById('endRange').textContent = endIndex;
+                document.getElementById('totalItems').textContent = logsArray.length;
+                
+                // Disable/enable pagination buttons
+                document.getElementById('prevPageBtn').disabled = currentPage === 1;
+                document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0;
+                
+                // Update pagination container
+                const paginationContainer = document.getElementById('paginationContainer');
+                paginationContainer.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `px-3 py-1 ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400'} border border-gray-700 hover:bg-gray-700`;
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderLogsTable(logsArray);
+                    });
+                    paginationContainer.appendChild(pageBtn);
+                }
+                
+                logsTableBody.innerHTML = '';
+                
+                if (logsArray.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+                
+                // Get current page items
+                const currentItems = logsArray.slice(startIndex, endIndex);
+                
+                currentItems.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.classList.add('hover:bg-gray-750', 'transition-colors');
+                    
+                    row.innerHTML = `
+                        <td class="py-3 px-4">${log.id}</td>
+                        <td class="py-3 px-4">${formatDateTime(log.dateTime)}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(log.type)}">
+                                <i class="fas ${getTypeIcon(log.type)} mr-1"></i>
+                                ${log.type}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">${log.item}</td>
+                        <td class="py-3 px-4">${log.personnel}</td>
+                        <td class="py-3 px-4 max-w-md truncate">${log.description}</td>
+                        <td class="py-3 px-4 text-right space-x-1">
+                            <button class="text-blue-400 hover:text-blue-300 p-1 view-btn" title="View Details" data-id="${log.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-400 hover:text-green-300 p-1 edit-btn" title="Edit Log" data-id="${log.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-400 hover:text-red-300 p-1 delete-btn" title="Delete Log" data-id="${log.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    logsTableBody.appendChild(row);
+                });
+                
+                // Add event listeners for row actions
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        viewLog(id);
+                    });
+                });
+                
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        editLog(id);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteLog(id);
+                    });
+                });
+                
+                // Update statistics
+                updateLogStats();
+            }
+            
+            // View log details in a modal
+            function viewLog(id) {
+                const log = logs.find(l => l.id === id);
+                if (!log) return;
+                
+                // Create a view-only modal
+                const viewModal = document.createElement('div');
+                viewModal.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50';
+                viewModal.innerHTML = `
+                    <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl">
+                        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                            <h3 class="text-xl font-bold flex items-center">
+                                <i class="fas ${getTypeIcon(log.type)} text-blue-500 mr-2"></i>
+                                Log Details - ${log.type}
+                            </h3>
+                            <button id="closeViewBtn" class="text-gray-400 hover:text-white">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">ID:</span>
+                                <span class="font-medium">${log.id}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Date & Time:</span>
+                                <span class="font-medium">${formatDateTime(log.dateTime)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Type:</span>
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(log.type)}">
+                                    <i class="fas ${getTypeIcon(log.type)} mr-1"></i>
+                                    ${log.type}
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Item:</span>
+                                <span class="font-medium">${log.item}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Personnel:</span>
+                                <span class="font-medium">${log.personnel}</span>
+                            </div>
+                            <div class="border-t border-gray-700 pt-4">
+                                <span class="text-gray-400">Description:</span>
+                                <p class="mt-2 bg-gray-750 p-3 rounded">${log.description}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+                            <button type="button" id="closeViewBtnBottom" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                                <i class="fas fa-check mr-2"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(viewModal);
+                
+                // Add close functionality
+                document.getElementById('closeViewBtn').addEventListener('click', () => {
+                    document.body.removeChild(viewModal);
+                });
+                
+                document.getElementById('closeViewBtnBottom').addEventListener('click', () => {
+                    document.body.removeChild(viewModal);
+                });
+            }
+
+            // Apply enhanced filters
+            function applyFilters() {
+                let filteredLogs = logs;
+                
+                // Search filter
+                const searchTerm = searchLogs.value.toLowerCase();
+                if (searchTerm) {
+                    filteredLogs = filteredLogs.filter(log => 
+                        log.item.toLowerCase().includes(searchTerm) ||
+                        log.personnel.toLowerCase().includes(searchTerm) ||
+                        log.description.toLowerCase().includes(searchTerm) ||
+                        log.type.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Date range filter
+                const startDate = document.getElementById('logDateFilterStart').value;
+                const endDate = document.getElementById('logDateFilterEnd').value;
+                
+                if (startDate && endDate) {
+                    const start = new Date(startDate);
+                    // Set end date to the end of the day
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999);
+                    
+                    filteredLogs = filteredLogs.filter(log => {
+                        const logDate = new Date(log.dateTime);
+                        return logDate >= start && logDate <= end;
+                    });
+                } else if (startDate) {
+                    const start = new Date(startDate);
+                    filteredLogs = filteredLogs.filter(log => {
+                        const logDate = new Date(log.dateTime);
+                        return logDate >= start;
+                    });
+                } else if (endDate) {
+                    // Set end date to the end of the day
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999);
+                    
+                    filteredLogs = filteredLogs.filter(log => {
+                        const logDate = new Date(log.dateTime);
+                        return logDate <= end;
+                    });
+                }
+                
+                // Type filter
+                const typeFilter = logTypeFilter.value;
+                if (typeFilter) {
+                    filteredLogs = filteredLogs.filter(log => 
+                        log.type === typeFilter
+                    );
+                }
+
+                // Personnel filter
+                const personnelFilter = document.getElementById('personnelFilter').value;
+                if (personnelFilter) {
+                    filteredLogs = filteredLogs.filter(log => 
+                        log.personnel === personnelFilter
+                    );
+                }
+
+                // Reset to first page
+                currentPage = 1;
+
+                // Update the UI with filtered logs
+                renderLogsTable(filteredLogs);
+                updateCharts(filteredLogs);
+
+                // Visual feedback for active filters
+                const filtersActive = searchTerm || startDate || endDate || typeFilter || personnelFilter;
+
+                document.querySelectorAll('.filter-indicator').forEach(el => el.remove());
+
+                if (filtersActive) {
+                    const activeFiltersCount = [
+                        searchTerm, 
+                        (startDate || endDate), 
+                        typeFilter, 
+                        personnelFilter
+                    ].filter(Boolean).length;
+                    
+                    // Create filter indicator
+                    const indicator = document.createElement('span');
+                    indicator.className = 'ml-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full filter-indicator';
+                    indicator.textContent = activeFiltersCount;
+                    clearFiltersBtn.prepend(indicator);
+                    
+                    // Add active styling to filters panel
+                    clearFiltersBtn.classList.remove('bg-gray-700');
+                    clearFiltersBtn.classList.add('bg-blue-600');
+                } else {
+                    clearFiltersBtn.classList.add('bg-gray-700');
+                    clearFiltersBtn.classList.remove('bg-blue-600');
+                }
+            }
+
+            // Search functionality
+            searchLogs.addEventListener('input', applyFilters);
+            
+            // Date filter
+            logDateFilter.addEventListener('change', applyFilters);
+            
+            // Type filter
+            logTypeFilter.addEventListener('change', applyFilters);
+            
+            // Clear filters
+            clearFiltersBtn.addEventListener('click', function() {
+                searchLogs.value = '';
+                logDateFilter.value = '';
+                logTypeFilter.value = '';
+                renderLogsTable();
+            });
+
+            // Show add log modal
+            addLogBtn.addEventListener('click', function() {
+                modalTitle.textContent = 'Add New Log Entry';
+                logForm.reset();
+                logIdInput.value = '';
+                
+                // Set current date and time
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                document.getElementById('logDateTime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                
+                logModal.classList.remove('hidden');
+            });
+
+            // Cancel button in modal
+            cancelLogBtn.addEventListener('click', function() {
+                logModal.classList.add('hidden');
+            });
+
+            // Form submission
+            logForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const id = logIdInput.value ? parseInt(logIdInput.value) : logs.length > 0 ? Math.max(...logs.map(l => l.id)) + 1 : 1;
+                const dateTime = document.getElementById('logDateTime').value;
+                const type = document.getElementById('logType').value;
+                const item = document.getElementById('logItem').value;
+                const personnel = document.getElementById('logPersonnel').value;
+                const description = document.getElementById('logDescription').value;
+                
+                if (logIdInput.value) {
+                    // Edit existing log
+                    const index = logs.findIndex(l => l.id === parseInt(logIdInput.value));
+                    if (index !== -1) {
+                        logs[index] = { id, dateTime, type, item, personnel, description };
+                    }
+                } else {
+                    // Add new log
+                    logs.push({ id, dateTime, type, item, personnel, description });
+                }
+                
+                applyFilters(); // Re-apply any active filters
+                logModal.classList.add('hidden');
+            });
+
+            // Edit log
+            function editLog(id) {
+                const log = logs.find(l => l.id === id);
+                if (log) {
+                    modalTitle.textContent = 'Edit Log Entry';
+                    logIdInput.value = log.id;
+                    document.getElementById('logDateTime').value = log.dateTime;
+                    document.getElementById('logType').value = log.type;
+                    document.getElementById('logItem').value = log.item;
+                    document.getElementById('logPersonnel').value = log.personnel;
+                    document.getElementById('logDescription').value = log.description;
+                    
+                    logModal.classList.remove('hidden');
+                }
+            }
+
+            // Delete log
+            function deleteLog(id) {
+                if (confirm('Are you sure you want to delete this log entry?')) {
+                    logs = logs.filter(l => l.id !== id);
+                    applyFilters(); // Re-apply any active filters
+                }
+            }
+
+            // Initial render
+            renderLogsTable();
+        });
+    </script>
+    <script>
+        // Create and update charts
+        function createCharts() {
+            // Check if chart elements exist
+            const typeChartEl = document.getElementById('logTypeChart');
+            const timelineChartEl = document.getElementById('logTimelineChart');
+            
+            if (!typeChartEl || !timelineChartEl) {
+                console.error('Chart canvas elements not found');
+                return;
+            }
+            
+            // Group logs by type for pie chart
+            const logsByType = {};
+            logs.forEach(log => {
+                logsByType[log.type] = (logsByType[log.type] || 0) + 1;
+            });
+            
+            // Group logs by date for timeline chart
+            const logsByDate = {};
+            logs.forEach(log => {
+                const date = new Date(log.dateTime).toLocaleDateString();
+                logsByDate[date] = (logsByDate[date] || 0) + 1;
+            });
+            
+            // Create logs by type chart
+            const typeCtx = typeChartEl.getContext('2d');
+            window.logTypeChart = new Chart(typeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(logsByType),
+                    datasets: [{
+                        data: Object.values(logsByType),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)', // blue - Checkout
+                            'rgba(16, 185, 129, 0.8)', // green - Return
+                            'rgba(245, 158, 11, 0.8)', // yellow - Maintenance
+                            'rgba(139, 92, 246, 0.8)', // purple - Inspection
+                            'rgba(239, 68, 68, 0.8)'   // red - Incident
+                        ],
+                        borderColor: 'rgba(17, 24, 39, 0.8)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Sort dates for timeline chart
+            const sortedDates = Object.keys(logsByDate).sort((a, b) => 
+                new Date(a) - new Date(b)
+            );
+            
+            // Create timeline chart
+            const timelineCtx = timelineChartEl.getContext('2d');
+            window.logTimelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'Number of Logs',
+                        data: sortedDates.map(date => logsByDate[date]),
+                        borderColor: 'rgba(59, 130, 246, 0.8)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointRadius: 4,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            },
+                            ticks: {
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(75, 85, 99, 0.2)'
+                            },
+                            ticks: {
+                                precision: 0,
+                                color: 'rgb(229, 231, 235)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts with filtered data
+        function updateCharts(filteredLogs = logs) {
+            if (!window.logTypeChart || !window.logTimelineChart) {
+                createCharts();
+                return;
+            }
+            
+            // Update type chart
+            const logsByType = {};
+            filteredLogs.forEach(log => {
+                logsByType[log.type] = (logsByType[log.type] || 0) + 1;
+            });
+            
+            window.logTypeChart.data.labels = Object.keys(logsByType);
+            window.logTypeChart.data.datasets[0].data = Object.values(logsByType);
+            window.logTypeChart.update();
+            
+            // Update timeline chart
+            const logsByDate = {};
+            filteredLogs.forEach(log => {
+                const date = new Date(log.dateTime).toLocaleDateString();
+                logsByDate[date] = (logsByDate[date] || 0) + 1;
+            });
+            
+            const sortedDates = Object.keys(logsByDate).sort((a, b) => 
+                new Date(a) - new Date(b)
+            );
+            
+            window.logTimelineChart.data.labels = sortedDates;
+            window.logTimelineChart.data.datasets[0].data = sortedDates.map(date => logsByDate[date]);
+            window.logTimelineChart.update();
+        }
+    </script>
+    <script>
+        // Update statistics on the dashboard
+        function updateLogStats() {
+            // Total logs
+            document.getElementById('totalLogs').textContent = logs.length;
+            
+            // Count by type
+            const checkouts = logs.filter(log => log.type === 'Checkout').length;
+            document.getElementById('checkoutCount').textContent = checkouts;
+            
+            const maintenance = logs.filter(log => log.type === 'Maintenance').length;
+            document.getElementById('maintenanceCount').textContent = maintenance;
+            
+            // Today's logs
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const todayLogs = logs.filter(log => {
+                const logDate = new Date(log.dateTime);
+                logDate.setHours(0, 0, 0, 0);
+                return logDate.getTime() === today.getTime();
+            }).length;
+            
+            document.getElementById('todayLogs').textContent = todayLogs;
+        }
+    </script>
+    <script>
+        // Initialize everything
+        function initApp() {
+            // Create initial charts
+            createCharts();
+            
+            // Populate personnel filter
+            populatePersonnelFilter();
+            
+            // Render initial table
+            renderLogsTable();
+            
+            // Update dashboard stats
+            updateLogStats();
+            
+            // Set up event listeners for filters
+            document.getElementById('searchLogs').addEventListener('input', applyFilters);
+            document.getElementById('logDateFilterStart').addEventListener('change', applyFilters);
+            document.getElementById('logDateFilterEnd').addEventListener('change', applyFilters);
+            document.getElementById('logTypeFilter').addEventListener('change', applyFilters);
+            document.getElementById('personnelFilter').addEventListener('change', applyFilters);
+            
+            // Clear filters button
+            document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+                document.getElementById('searchLogs').value = '';
+                document.getElementById('logDateFilterStart').value = '';
+                document.getElementById('logDateFilterEnd').value = '';
+                document.getElementById('logTypeFilter').value = '';
+                document.getElementById('personnelFilter').value = '';
+                
+                currentPage = 1;
+                renderLogsTable(logs);
+                updateCharts(logs);
+                
+                this.classList.add('bg-gray-700');
+                this.classList.remove('bg-blue-600');
+                
+                document.querySelectorAll('.filter-indicator').forEach(el => el.remove());
+            });
+            
+            // Set up refresh button
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                this.classList.add('animate-spin');
+                
+                // Simulate data refresh
+                setTimeout(() => {
+                    renderLogsTable();
+                    updateCharts();
+                    this.classList.remove('animate-spin');
+                    
+                    // Update last updated time
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    document.getElementById('lastUpdated').textContent = `Today, ${timeString}`;
+                    
+                    // Show toast notification
+                    showToast('Logs refreshed successfully!', 'success');
+                }, 800);
+            });
+            
+            // Set up pagination buttons
+            document.getElementById('prevPageBtn').addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderLogsTable();
+                }
+            });
+            
+            document.getElementById('nextPageBtn').addEventListener('click', function() {
+                const totalPages = Math.ceil(logs.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderLogsTable();
+                }
+            });
+            
+            // Add log button
+            document.getElementById('addLogBtn').addEventListener('click', function() {
+                // Reset form
+                document.getElementById('logForm').reset();
+                document.getElementById('logId').value = '';
+                
+                // Set current date and time
+                const now = new Date();
+                const dateTimeStr = now.toISOString().slice(0, 16); // Format: YYYY-MM-DDThh:mm
+                document.getElementById('logDateTime').value = dateTimeStr;
+                
+                // Update modal title
+                document.getElementById('modalTitle').innerHTML = `<i class="fas fa-plus text-blue-500 mr-2"></i> Add New Log Entry`;
+                
+                // Show modal
+                document.getElementById('logModal').classList.remove('hidden');
+            });
+            
+            // Close modal buttons
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                document.getElementById('logModal').classList.add('hidden');
+            });
+            
+            document.getElementById('cancelLogBtn').addEventListener('click', function() {
+                document.getElementById('logModal').classList.add('hidden');
+            });
+            
+            // Form submission
+            document.getElementById('logForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const logId = document.getElementById('logId').value;
+                const id = logId ? parseInt(logId) : Math.max(...logs.map(l => l.id), 0) + 1;
+                
+                const newLog = {
+                    id: id,
+                    dateTime: document.getElementById('logDateTime').value,
+                    type: document.getElementById('logType').value,
+                    item: document.getElementById('logItem').value,
+                    personnel: document.getElementById('logPersonnel').value,
+                    description: document.getElementById('logDescription').value
+                };
+                
+                if (logId) {
+                    // Update existing log
+                }
+            });
+        }
+    </script>
+    <script>
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            // Remove any existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                toast.remove();
+            });
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 px-4 py-2 rounded shadow-lg z-50 flex items-center toast-notification transform transition-transform duration-300 translate-x-full';
+            
+            // Set styles based on type
+            let bgColor, icon;
+            switch(type) {
+                case 'success':
+                    bgColor = 'bg-green-500';
+                    icon = 'fa-check-circle';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-500';
+                    icon = 'fa-times-circle';
+                    break;
+                case 'warning':
+                    bgColor = 'bg-yellow-500';
+                    icon = 'fa-exclamation-triangle';
+                    break;
+                default:
+                    bgColor = 'bg-blue-500';
+                    icon = 'fa-info-circle';
+            }
+            
+            toast.classList.add(bgColor);
+            
+            toast.innerHTML = `
+        <i class="fas ${icon} mr-2"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 10);
+    
+    // Remove after delay
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Populate personnel filter with unique names
+function populatePersonnelFilter() {
+    const personnelFilter = document.getElementById('personnelFilter');
+    const uniquePersonnel = [...new Set(logs.map(log => log.personnel))].sort();
+    
+    // Clear any existing options except the first one
+    while (personnelFilter.options.length > 1) {
+        personnelFilter.remove(1);
+    }
+    
+    // Add personnel options
+    uniquePersonnel.forEach(person => {
+        const option = document.createElement('option');
+        option.value = person;
+        option.textContent = person;
+        personnelFilter.appendChild(option);
+    });
+}
