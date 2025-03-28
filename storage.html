@@ -5,65 +5,212 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storage - Army Weapons Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Improved tailwind config with more custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-750': '#2d3748',
+                        'gray-850': '#1a202c',
+                        'blue-950': '#172554',
+                        'green-950': '#14532d'
+                    },
+                    boxShadow: {
+                        'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Add favicon -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svgs/solid/shield-alt.svg">
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
     
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between">
-        <h1 class="text-2xl font-bold">Army Weapons Management</h1>
-        <ul class="flex space-x-4 ml-auto">
-            <li><a href="Dashboard.html" class="hover:text-gray-300">Dashboard</a></li>
-            <li><a href="weapons.html" class="hover:text-gray-300">Weapons</a></li>
-            <li><a href="ammunition.html" class="hover:text-gray-300">Ammunition</a></li>
-            <li><a href="personnel.html" class="hover:text-gray-300">Personnel</a></li>
-            <li><a href="storage.html" class="hover:text-gray-300 font-bold">Storage</a></li>
-            <li><a href="logs.html" class="hover:text-gray-300">Logs</a></li>
-        </ul>
-    </nav>
-    
-    <!-- Storage Management -->
-    <section id="storage" class="p-6">
-        <h2 class="text-3xl font-bold mb-6">Storage Management</h2>
-        
-        <!-- Search and Add Section -->
-        <div class="flex justify-between mb-6">
-            <div class="w-1/3">
-                <input type="text" id="searchStorage" placeholder="Search storage locations..." 
-                    class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <button id="addStorageBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
-                Add New Storage Location
-            </button>
+    <!-- Enhanced Navbar with dropdown and notification features -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
         </div>
         
-        <!-- Filters Section -->
-        <div class="flex justify-between mb-6">
-            <div class="flex space-x-4">
-                <select id="typeFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Types</option>
-                    <option value="Armory">Armory</option>
-                    <option value="Ammunition Depot">Ammunition Depot</option>
-                    <option value="Secure Room">Secure Room</option>
-                    <option value="Vault">Vault</option>
-                    <option value="Other">Other</option>
-                </select>
-                <select id="securityLevelFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Security Levels</option>
-                    <option value="Level 1">Level 1</option>
-                    <option value="Level 2">Level 2</option>
-                    <option value="Level 3">Level 3</option>
-                    <option value="Top Secret">Top Secret</option>
-                </select>
-                <select id="capacityFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Capacities</option>
-                    <option value="low">Low Usage (< 50%)</option>
-                    <option value="medium">Medium Usage (50-80%)</option>
-                    <option value="high">High Usage (> 80%)</option>
-                </select>
-            </div>
-            <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
-                Clear Filters
+        <ul class="flex space-x-2 md:space-x-4 ml-auto">
+            <li><a href="Dashboard.html" class="flex items-center px-2 md:px-3 py-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+                <i class="fas fa-chart-line mr-1"></i> 
+                <span class="hidden md:inline">Dashboard</span>
+            </a></li>
+            <li><a href="weapons.html" class="flex items-center px-2 md:px-3 py-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+                <i class="fas fa-gun mr-1"></i> 
+                <span class="hidden md:inline">Weapons</span>
+            </a></li>
+            <li><a href="ammunition.html" class="flex items-center px-2 md:px-3 py-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+                <i class="fas fa-box-open mr-1"></i> 
+                <span class="hidden md:inline">Ammunition</span>
+            </a></li>
+            <li><a href="personnel.html" class="flex items-center px-2 md:px-3 py-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+                <i class="fas fa-users mr-1"></i> 
+                <span class="hidden md:inline">Personnel</span>
+            </a></li>
+            <li><a href="storage.html" class="flex items-center px-2 md:px-3 py-2 bg-blue-600 rounded-md transition-colors duration-200">
+                <i class="fas fa-warehouse mr-1"></i> 
+                <span class="hidden md:inline">Storage</span>
+            </a></li>
+            <li><a href="logs.html" class="flex items-center px-2 md:px-3 py-2 hover:bg-gray-700 rounded-md transition-colors duration-200">
+                <i class="fas fa-clipboard-list mr-1"></i> 
+                <span class="hidden md:inline">Logs</span>
+            </a></li>
+        </ul>
+        
+        <!-- Enhanced User Menu with dropdown -->
+        <div class="ml-4 relative group">
+            <button class="flex items-center text-sm rounded-full focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
+                <span class="ml-1 md:ml-2 hidden md:inline">Admin</span>
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
             </button>
+            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Enhanced Storage Header with Status Badge -->
+    <section id="storage" class="p-6 flex-grow">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fas fa-warehouse text-blue-500 text-3xl mr-3"></i>
+                <div>
+                    <h2 class="text-3xl font-bold">Storage Management</h2>
+                    <p class="text-gray-400 text-sm">Manage weapon storage locations and capacity</p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <span class="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded-full flex items-center">
+                    <i class="fas fa-info-circle mr-1"></i> System Status: Normal
+                </span>
+                <div class="ml-4 text-sm text-gray-400">
+                    Total locations: <span class="text-white font-semibold" id="totalLocations">3</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Improved Storage Stats Cards with Visual Usage Indicators -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg overflow-hidden relative">
+                <div class="flex justify-between items-center relative z-10">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Capacity</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalCapacity">5,250</p>
+                        <p class="text-xs text-gray-400 mt-1">Units of storage</p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-box-open text-3xl text-blue-400"></i>
+                    </div>
+                </div>
+                <div class="absolute left-0 bottom-0 h-1 bg-blue-500 w-full"></div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg overflow-hidden relative">
+                <div class="flex justify-between items-center relative z-10">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Current Usage</h3>
+                        <p class="text-3xl font-bold mt-2" id="currentUsageTotal">3,395</p>
+                        <p class="text-xs text-gray-400 mt-1">Units in use</p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-boxes text-3xl text-green-400"></i>
+                    </div>
+                </div>
+                <div class="absolute left-0 bottom-0 h-1 bg-green-500 w-3/5"></div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg overflow-hidden relative">
+                <div class="flex justify-between items-center relative z-10">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Utilization Rate</h3>
+                        <p class="text-3xl font-bold mt-2" id="utilizationRate">64.7%</p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>2.3%</span> from last month
+                        </p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-chart-pie text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+                <!-- Animated progress bar -->
+                <div class="absolute left-0 bottom-0 h-1 bg-yellow-500" style="width: 64.7%"></div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Search and Filters with Better UX -->
+        <div class="bg-gray-800 p-5 rounded-lg shadow-lg mb-6">
+            <div class="flex flex-col lg:flex-row justify-between mb-4">
+                <div class="flex-grow lg:mr-4 mb-3 lg:mb-0">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="searchStorage" placeholder="Search by location name, type or security level..." 
+                            class="block w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="exportStorageBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                    <button id="printStorageBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-print mr-2"></i> Print
+                    </button>
+                    <button id="addStorageBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i> Add Location
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Enhanced Filters with Better Mobile Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Storage Type</label>
+                    <select id="typeFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                        <option value="">All Types</option>
+                        <option value="Armory">Armory</option>
+                        <option value="Ammunition Depot">Ammunition Depot</option>
+                        <option value="Secure Room">Secure Room</option>
+                        <option value="Vault">Vault</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Security Level</label>
+                    <select id="securityLevelFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                        <option value="">All Security Levels</option>
+                        <option value="Level 1">Level 1</option>
+                        <option value="Level 2">Level 2</option>
+                        <option value="Level 3">Level 3</option>
+                        <option value="Top Secret">Top Secret</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Capacity Usage</label>
+                    <select id="capacityFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                        <option value="">All Capacities</option>
+                        <option value="low">Low Usage (< 50%)</option>
+                        <option value="medium">Medium Usage (50-80%)</option>
+                        <option value="high">High Usage (> 80%)</option>
+                        <option value="critical">Critical (> 95%)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                    <i class="fas fa-times mr-2"></i> Clear Filters
+                </button>
+            </div>
         </div>
         
         <!-- Storage Table -->
@@ -134,9 +281,9 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center p-4 bg-gray-800 mt-6">
-        <p>© 2025 Army Weapons Management System</p>
+    <!-- Footer at the bottom of page -->
+    <footer class="bg-gray-800 p-4 text-center border-t border-gray-700 mt-auto">
+        <p>© 2025 Army Weapons Management System | <a href="#" class="text-blue-400 hover:underline">Terms</a> | <a href="#" class="text-blue-400 hover:underline">Privacy</a></p>
     </footer>
 
     <script>
@@ -258,6 +405,8 @@
                         return usagePercentage >= 50 && usagePercentage <= 80;
                     } else if (capacityValue === 'high') {
                         return usagePercentage > 80;
+                    } else if (capacityValue === 'critical') {
+                        return usagePercentage > 95;
                     }
                     
                     return true;

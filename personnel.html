@@ -5,103 +5,246 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personnel - Army Weapons Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-750': '#2d3748',
+                        'gray-850': '#1a202c'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
     
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between">
-        <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+    <!-- Enhanced Navbar with icons and active states -->
+    <nav class="bg-gray-800 p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center">
+            <i class="fas fa-shield-alt text-blue-500 text-2xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Army Weapons Management</h1>
+        </div>
         <ul class="flex space-x-4 ml-auto">
-            <li><a href="Dashboard.html" class="hover:text-gray-300">Dashboard</a></li>
-            <li><a href="weapons.html" class="hover:text-gray-300">Weapons</a></li>
-            <li><a href="ammunition.html" class="hover:text-gray-300">Ammunition</a></li>
-            <li><a href="personnel.html" class="hover:text-gray-300 font-bold">Personnel</a></li>
-            <li><a href="storage.html" class="hover:text-gray-300">Storage</a></li>
-            <li><a href="logs.html" class="hover:text-gray-300">Logs</a></li>
+            <li><a href="Dashboard.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-chart-line mr-1"></i> Dashboard</a></li>
+            <li><a href="weapons.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-gun mr-1"></i> Weapons</a></li>
+            <li><a href="ammunition.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-box-open mr-1"></i> Ammunition</a></li>
+            <li><a href="personnel.html" class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md"><i class="fas fa-users mr-1"></i> Personnel</a></li>
+            <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
+            <li><a href="logs.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
         </ul>
+        <!-- User profile -->
+        <div class="ml-4">
+            <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User">
+        </div>
     </nav>
     
-    <!-- Personnel Management -->
-    <section id="personnel" class="p-6">
-        <h2 class="text-3xl font-bold mb-6">Personnel Management</h2>
-        
-        <!-- Search and Add Section -->
-        <div class="flex justify-between mb-6">
-            <div class="w-1/3">
-                <input type="text" id="searchPersonnel" placeholder="Search personnel..." 
-                    class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Personnel Management Header with Stats -->
+    <section id="personnel" class="p-6 flex-grow">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-3xl font-bold flex items-center">
+                    <i class="fas fa-users text-blue-500 mr-3"></i>
+                    Personnel Management
+                </h2>
+                <p class="text-gray-400">Manage military personnel and weapon assignments</p>
             </div>
-            <button id="addPersonnelBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
-                Add New Personnel
-            </button>
+            <div class="flex items-center text-sm bg-gray-800 px-4 py-2 rounded-lg">
+                <div class="mr-4">
+                    <span class="text-gray-400">Total Personnel:</span>
+                    <span class="font-bold ml-1" id="totalPersonnel">3</span>
+                </div>
+                <div>
+                    <span class="text-gray-400">With Weapons:</span>
+                    <span class="font-bold ml-1" id="withWeaponsCount">2</span>
+                </div>
+            </div>
         </div>
         
-        <!-- Filters Section -->
-        <div class="flex justify-between mb-6">
-            <div class="flex space-x-4">
-                <select id="rankFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Ranks</option>
-                    <option value="Private">Private</option>
-                    <option value="Corporal">Corporal</option>
-                    <option value="Sergeant">Sergeant</option>
-                    <option value="Lieutenant">Lieutenant</option>
-                    <option value="Captain">Captain</option>
-                    <option value="Major">Major</option>
-                    <option value="Colonel">Colonel</option>
-                </select>
-                <select id="unitFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Units</option>
-                    <option value="Alpha Company">Alpha Company</option>
-                    <option value="Bravo Company">Bravo Company</option>
-                    <option value="Charlie Company">Charlie Company</option>
-                </select>
-                <select id="weaponsAssignedFilter" class="p-2 bg-gray-700 rounded-md border border-gray-600">
-                    <option value="">All Personnel</option>
-                    <option value="with-weapons">With Weapons</option>
-                    <option value="without-weapons">Without Weapons</option>
-                </select>
+        <!-- Personnel Cards Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Officers</h3>
+                        <p class="text-3xl font-bold mt-2" id="officerCount">1</p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-user-tie text-3xl text-blue-400"></i>
+                    </div>
+                </div>
             </div>
-            <button id="clearFiltersBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">
-                Clear Filters
-            </button>
+            
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg border-l-4 border-green-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Enlisted</h3>
+                        <p class="text-3xl font-bold mt-2" id="enlistedCount">2</p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-user-shield text-3xl text-green-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-800 to-gray-850 p-6 rounded-lg shadow-lg border-l-4 border-yellow-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">High Clearance</h3>
+                        <p class="text-3xl font-bold mt-2" id="highClearanceCount">1</p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-user-lock text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <!-- Personnel Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="py-3 px-4 text-left">ID</th>
-                        <th class="py-3 px-4 text-left">Name</th>
-                        <th class="py-3 px-4 text-left">Rank</th>
-                        <th class="py-3 px-4 text-left">Badge Number</th>
-                        <th class="py-3 px-4 text-left">Unit</th>
-                        <th class="py-3 px-4 text-left">Clearance Level</th>
-                        <th class="py-3 px-4 text-left">Assigned Weapons</th>
-                        <th class="py-3 px-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="personnelTableBody">
-                    <!-- Sample data, will be populated by JavaScript -->
-                </tbody>
-            </table>
+        <!-- Enhanced Search and Add Section -->
+        <div class="bg-gray-800 p-5 rounded-lg shadow-lg mb-6">
+            <div class="flex flex-col lg:flex-row justify-between mb-4">
+                <div class="flex-grow lg:mr-4 mb-3 lg:mb-0">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="searchPersonnel" placeholder="Search by name, rank, badge number or unit..." 
+                            class="block w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex">
+                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center mr-2">
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                    <button id="addPersonnelBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center">
+                        <i class="fas fa-user-plus mr-2"></i> Add Personnel
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Enhanced Filters with Better UI -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="rankFilter" class="block text-sm font-medium text-gray-400 mb-1">Rank</label>
+                    <select id="rankFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Ranks</option>
+                        <option value="Private">Private</option>
+                        <option value="Corporal">Corporal</option>
+                        <option value="Sergeant">Sergeant</option>
+                        <option value="Lieutenant">Lieutenant</option>
+                        <option value="Captain">Captain</option>
+                        <option value="Major">Major</option>
+                        <option value="Colonel">Colonel</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="unitFilter" class="block text-sm font-medium text-gray-400 mb-1">Unit</label>
+                    <select id="unitFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Units</option>
+                        <option value="Alpha Company">Alpha Company</option>
+                        <option value="Bravo Company">Bravo Company</option>
+                        <option value="Charlie Company">Charlie Company</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="clearanceFilter" class="block text-sm font-medium text-gray-400 mb-1">Clearance</label>
+                    <select id="clearanceFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Clearances</option>
+                        <option value="Level 1">Level 1</option>
+                        <option value="Level 2">Level 2</option>
+                        <option value="Level 3">Level 3</option>
+                        <option value="Level 4">Level 4</option>
+                        <option value="Level 5">Level 5</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="weaponsAssignedFilter" class="block text-sm font-medium text-gray-400 mb-1">Weapons Status</label>
+                    <select id="weaponsAssignedFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Personnel</option>
+                        <option value="with-weapons">With Weapons</option>
+                        <option value="without-weapons">Without Weapons</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-times mr-2"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+        
+        <!-- Enhanced Personnel Table with Visual Improvements -->
+        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-750">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Name</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Badge Number</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Unit</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Clearance</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Assigned Weapons</th>
+                            <th class="py-3 px-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personnelTableBody" class="divide-y divide-gray-700">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-between">
+            <div class="text-sm text-gray-400">
+                Showing <span id="startRange">1</span> to <span id="endRange">3</span> of <span id="totalItems">3</span> personnel
+            </div>
+            <div class="flex">
+                <button id="prevPageBtn" class="px-3 py-1 bg-gray-700 text-gray-400 rounded-l-md border border-r-0 border-gray-600 hover:bg-gray-600">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="paginationContainer" class="flex">
+                    <button class="px-3 py-1 bg-blue-600 text-white border border-gray-600">1</button>
+                </div>
+                <button id="nextPageBtn" class="px-3 py-1 bg-gray-700 text-gray-400 rounded-r-md border border-gray-600 hover:bg-gray-600">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
     </section>
     
-    <!-- Add/Edit Personnel Modal -->
-    <div id="personnelModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 p-6 rounded-lg w-1/2">
-            <h3 id="modalTitle" class="text-xl font-bold mb-4">Add New Personnel</h3>
-            <form id="personnelForm">
+    <!-- Improved Add/Edit Personnel Modal with Better UX -->
+    <div id="personnelModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                <h3 id="modalTitle" class="text-xl font-bold flex items-center">
+                    <i class="fas fa-user-plus text-blue-500 mr-2"></i>
+                    Add New Personnel
+                </h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="personnelForm" class="space-y-6">
                 <input type="hidden" id="personnelId">
-                <div class="grid grid-cols-2 gap-4 mb-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="personnelName" class="block mb-1">Full Name</label>
-                        <input type="text" id="personnelName" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="personnelName" class="block text-sm font-medium text-gray-400 mb-1">
+                            Full Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="personnelName" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label for="rank" class="block mb-1">Rank</label>
-                        <select id="rank" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="rank" class="block text-sm font-medium text-gray-400 mb-1">
+                            Rank <span class="text-red-500">*</span>
+                        </label>
+                        <select id="rank" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="Private">Private</option>
                             <option value="Corporal">Corporal</option>
                             <option value="Sergeant">Sergeant</option>
@@ -113,16 +256,28 @@
                         </select>
                     </div>
                     <div>
-                        <label for="badgeNumber" class="block mb-1">Badge Number</label>
-                        <input type="text" id="badgeNumber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="badgeNumber" class="block text-sm font-medium text-gray-400 mb-1">
+                            Badge Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="badgeNumber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     </div>
                     <div>
-                        <label for="unit" class="block mb-1">Unit</label>
-                        <input type="text" id="unit" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="unit" class="block text-sm font-medium text-gray-400 mb-1">
+                            Unit <span class="text-red-500">*</span>
+                        </label>
+                        <select id="unit" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="Alpha Company">Alpha Company</option>
+                            <option value="Bravo Company">Bravo Company</option>
+                            <option value="Charlie Company">Charlie Company</option>
+                            <option value="Delta Company">Delta Company</option>
+                            <option value="Headquarters">Headquarters</option>
+                        </select>
                     </div>
                     <div>
-                        <label for="clearanceLevel" class="block mb-1">Clearance Level</label>
-                        <select id="clearanceLevel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="clearanceLevel" class="block text-sm font-medium text-gray-400 mb-1">
+                            Clearance Level <span class="text-red-500">*</span>
+                        </label>
+                        <select id="clearanceLevel" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             <option value="Level 1">Level 1</option>
                             <option value="Level 2">Level 2</option>
                             <option value="Level 3">Level 3</option>
@@ -130,31 +285,80 @@
                             <option value="Level 5">Level 5</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-400 mb-1">
+                            Status <span class="text-red-500">*</span>
+                        </label>
+                        <select id="status" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="Active">Active</option>
+                            <option value="On Leave">On Leave</option>
+                            <option value="Deployed">Deployed</option>
+                            <option value="Training">Training</option>
+                        </select>
+                    </div>
                     <div class="col-span-2">
-                        <label for="weaponsAssigned" class="block mb-1">Assigned Weapons (comma-separated)</label>
-                        <input type="text" id="weaponsAssigned" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="weaponsAssigned" class="block text-sm font-medium text-gray-400 mb-1">
+                            Assigned Weapons (comma-separated)
+                        </label>
+                        <textarea id="weaponsAssigned" rows="2" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancelPersonnelBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+                    <button type="button" id="cancelPersonnelBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center">
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="text-center p-4 bg-gray-800 mt-6">
+    <footer class="bg-gray-800 p-4 text-center mt-auto">
         <p>© 2025 Army Weapons Management System</p>
     </footer>
 
     <script>
-        // Sample personnel data with weapons assignments
+        // Enhanced sample data with additional fields
         let personnel = [
-            { id: 1, name: "John Doe", rank: "Sergeant", badgeNumber: "B12345", unit: "Alpha Company", clearanceLevel: "Level 3", weaponsAssigned: ["M4A1", "Glock 19"] },
-            { id: 2, name: "Jane Smith", rank: "Lieutenant", badgeNumber: "B67890", unit: "Bravo Company", clearanceLevel: "Level 4", weaponsAssigned: ["M9 Beretta"] },
-            { id: 3, name: "Mike Johnson", rank: "Private", badgeNumber: "B54321", unit: "Alpha Company", clearanceLevel: "Level 1", weaponsAssigned: [] }
+            { 
+                id: 1, 
+                name: "John Doe", 
+                rank: "Sergeant", 
+                badgeNumber: "B12345", 
+                unit: "Alpha Company", 
+                clearanceLevel: "Level 3", 
+                status: "Active",
+                weaponsAssigned: ["M4A1", "Glock 19"] 
+            },
+            { 
+                id: 2, 
+                name: "Jane Smith", 
+                rank: "Lieutenant", 
+                badgeNumber: "B67890", 
+                unit: "Bravo Company", 
+                clearanceLevel: "Level 4", 
+                status: "Active",
+                weaponsAssigned: ["M9 Beretta"] 
+            },
+            { 
+                id: 3, 
+                name: "Mike Johnson", 
+                rank: "Private", 
+                badgeNumber: "B54321", 
+                unit: "Alpha Company", 
+                clearanceLevel: "Level 1", 
+                status: "Training",
+                weaponsAssigned: [] 
+            }
         ];
+
+        // Pagination state
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
         // DOM elements
         const searchPersonnel = document.getElementById('searchPersonnel');
@@ -164,13 +368,31 @@
         const modalTitle = document.getElementById('modalTitle');
         const personnelForm = document.getElementById('personnelForm');
         const cancelPersonnelBtn = document.getElementById('cancelPersonnelBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
         const personnelIdInput = document.getElementById('personnelId');
-        const rankFilter = document.getElementById('rankFilter');
-        const unitFilter = document.getElementById('unitFilter');
-        const weaponsAssignedFilter = document.getElementById('weaponsAssignedFilter');
-        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        
+        // Update stats counters
+        function updateStats() {
+            document.getElementById('totalPersonnel').textContent = personnel.length;
+            
+            const withWeapons = personnel.filter(p => p.weaponsAssigned && p.weaponsAssigned.length > 0).length;
+            document.getElementById('withWeaponsCount').textContent = withWeapons;
+            
+            const officers = personnel.filter(p => 
+                ['Lieutenant', 'Captain', 'Major', 'Colonel', 'General'].includes(p.rank)
+            ).length;
+            document.getElementById('officerCount').textContent = officers;
+            
+            const enlisted = personnel.length - officers;
+            document.getElementById('enlistedCount').textContent = enlisted;
+            
+            const highClearance = personnel.filter(p => 
+                ['Level 4', 'Level 5'].includes(p.clearanceLevel)
+            ).length;
+            document.getElementById('highClearanceCount').textContent = highClearance;
+        }
 
-        // Apply filters
+        // Apply filters with pagination
         function applyFilters() {
             let filteredPersonnel = personnel;
             
@@ -190,7 +412,7 @@
             }
             
             // Rank filter
-            const rankValue = rankFilter.value;
+            const rankValue = document.getElementById('rankFilter').value;
             if (rankValue) {
                 filteredPersonnel = filteredPersonnel.filter(person => 
                     person.rank === rankValue
@@ -198,15 +420,23 @@
             }
             
             // Unit filter
-            const unitValue = unitFilter.value;
+            const unitValue = document.getElementById('unitFilter').value;
             if (unitValue) {
                 filteredPersonnel = filteredPersonnel.filter(person => 
                     person.unit === unitValue
                 );
             }
             
+            // Clearance filter
+            const clearanceValue = document.getElementById('clearanceFilter').value;
+            if (clearanceValue) {
+                filteredPersonnel = filteredPersonnel.filter(person => 
+                    person.clearanceLevel === clearanceValue
+                );
+            }
+            
             // Weapons assigned filter
-            const weaponsValue = weaponsAssignedFilter.value;
+            const weaponsValue = document.getElementById('weaponsAssignedFilter').value;
             if (weaponsValue === 'with-weapons') {
                 filteredPersonnel = filteredPersonnel.filter(person => 
                     person.weaponsAssigned && person.weaponsAssigned.length > 0
@@ -217,37 +447,75 @@
                 );
             }
             
+            // Reset to first page
+            currentPage = 1;
             renderPersonnelTable(filteredPersonnel);
         }
 
-        // Render personnel table
+        // Render personnel table with pagination
         function renderPersonnelTable(personnelArray = personnel) {
+            // Calculate pagination
+            const totalPages = Math.ceil(personnelArray.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, personnelArray.length);
+            
+            // Update pagination text
+            document.getElementById('startRange').textContent = personnelArray.length > 0 ? startIndex + 1 : 0;
+            document.getElementById('endRange').textContent = endIndex;
+            document.getElementById('totalItems').textContent = personnelArray.length;
+            
+            // Get current page items
+            const currentItems = personnelArray.slice(startIndex, endIndex);
+            
             personnelTableBody.innerHTML = '';
             
-            personnelArray.forEach(person => {
+            currentItems.forEach(person => {
                 const row = document.createElement('tr');
-                row.classList.add('border-t', 'border-gray-700', 'hover:bg-gray-750');
+                row.classList.add('hover:bg-gray-750');
+                
+                // Get rank badge color
+                const rankBadgeClass = 
+                    ['General', 'Colonel', 'Major'].includes(person.rank) ? 'bg-red-700' :
+                    ['Captain', 'Lieutenant'].includes(person.rank) ? 'bg-yellow-700' :
+                    ['Sergeant'].includes(person.rank) ? 'bg-blue-700' :
+                    'bg-gray-600';
+                
+                // Get clearance badge color
+                const clearanceBadgeClass = 
+                    person.clearanceLevel === 'Level 5' ? 'bg-red-700' : 
+                    person.clearanceLevel === 'Level 4' ? 'bg-orange-700' : 
+                    person.clearanceLevel === 'Level 3' ? 'bg-yellow-700' : 
+                    person.clearanceLevel === 'Level 2' ? 'bg-green-700' : 'bg-blue-700';
                 
                 row.innerHTML = `
                     <td class="py-3 px-4">${person.id}</td>
-                    <td class="py-3 px-4">${person.name}</td>
-                    <td class="py-3 px-4">${person.rank}</td>
+                    <td class="py-3 px-4 font-medium">${person.name}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${rankBadgeClass}">
+                            ${person.rank}
+                        </span>
+                    </td>
                     <td class="py-3 px-4">${person.badgeNumber}</td>
                     <td class="py-3 px-4">${person.unit}</td>
                     <td class="py-3 px-4">
-                        <span class="px-2 py-1 rounded-full text-xs ${
-                            person.clearanceLevel === 'Level 5' ? 'bg-red-700' : 
-                            person.clearanceLevel === 'Level 4' ? 'bg-orange-700' : 
-                            person.clearanceLevel === 'Level 3' ? 'bg-yellow-700' : 
-                            person.clearanceLevel === 'Level 2' ? 'bg-green-700' : 'bg-blue-700'
-                        }">${person.clearanceLevel}</span>
+                        <span class="px-2 py-1 rounded-full text-xs ${clearanceBadgeClass}">
+                            ${person.clearanceLevel}
+                        </span>
                     </td>
-                    <td class="py-3 px-4">${person.weaponsAssigned && person.weaponsAssigned.length > 0 ? 
-                        person.weaponsAssigned.join(', ') : 
-                        '<span class="text-gray-500">None</span>'}</td>
                     <td class="py-3 px-4">
-                        <button class="text-blue-400 hover:text-blue-300 mr-2 edit-btn" data-id="${person.id}">Edit</button>
-                        <button class="text-red-400 hover:text-red-300 delete-btn" data-id="${person.id}">Delete</button>
+                        ${person.weaponsAssigned && person.weaponsAssigned.length > 0 ? 
+                            person.weaponsAssigned.map(weapon => 
+                                `<span class="bg-blue-900 text-blue-100 text-xs px-2 py-1 rounded-full mr-1 mb-1 inline-block">${weapon}</span>`
+                            ).join('') : 
+                            '<span class="text-gray-500 italic">None assigned</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-right">
+                        <button class="text-blue-400 hover:text-blue-300 p-1 edit-btn" title="Edit" data-id="${person.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-400 hover:text-red-300 p-1 delete-btn" title="Delete" data-id="${person.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 `;
                 
@@ -268,79 +536,131 @@
                     deletePersonnel(id);
                 });
             });
+            
+            // Update stats counters
+            updateStats();
         }
 
-        // Update search functionality to use applyFilters
-        searchPersonnel.addEventListener('input', applyFilters);
-
-        // Add event listeners for filters
-        rankFilter.addEventListener('change', applyFilters);
-        unitFilter.addEventListener('change', applyFilters);
-        weaponsAssignedFilter.addEventListener('change', applyFilters);
-
-        // Clear filters
-        clearFiltersBtn.addEventListener('click', function() {
-            searchPersonnel.value = '';
-            rankFilter.value = '';
-            unitFilter.value = '';
-            weaponsAssignedFilter.value = '';
-            renderPersonnelTable();
-        });
-
-        // Show add personnel modal
-        addPersonnelBtn.addEventListener('click', function() {
-            modalTitle.textContent = 'Add New Personnel';
-            personnelForm.reset();
-            personnelIdInput.value = '';
-            personnelModal.classList.remove('hidden');
-        });
-
-        // Cancel button in modal
-        cancelPersonnelBtn.addEventListener('click', function() {
-            personnelModal.classList.add('hidden');
-        });
-
-        // Form submission
-        personnelForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            searchPersonnel.addEventListener('input', applyFilters);
             
-            const id = personnelIdInput.value ? parseInt(personnelIdInput.value) : personnel.length > 0 ? Math.max(...personnel.map(p => p.id)) + 1 : 1;
-            const name = document.getElementById('personnelName').value;
-            const rank = document.getElementById('rank').value;
-            const badgeNumber = document.getElementById('badgeNumber').value;
-            const unit = document.getElementById('unit').value;
-            const clearanceLevel = document.getElementById('clearanceLevel').value;
-            const weaponsAssigned = document.getElementById('weaponsAssigned').value
-                .split(',')
-                .map(weapon => weapon.trim())
-                .filter(weapon => weapon !== '');
+            // Filter event listeners
+            document.getElementById('rankFilter').addEventListener('change', applyFilters);
+            document.getElementById('unitFilter').addEventListener('change', applyFilters);
+            document.getElementById('clearanceFilter').addEventListener('change', applyFilters);
+            document.getElementById('weaponsAssignedFilter').addEventListener('change', applyFilters);
             
-            if (personnelIdInput.value) {
-                // Edit existing personnel
-                const index = personnel.findIndex(p => p.id === parseInt(personnelIdInput.value));
-                if (index !== -1) {
-                    personnel[index] = { id, name, rank, badgeNumber, unit, clearanceLevel, weaponsAssigned };
+            // Clear filters
+            document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+                searchPersonnel.value = '';
+                document.getElementById('rankFilter').value = '';
+                document.getElementById('unitFilter').value = '';
+                document.getElementById('clearanceFilter').value = '';
+                document.getElementById('weaponsAssignedFilter').value = '';
+                renderPersonnelTable();
+            });
+            
+            // Show add personnel modal
+            addPersonnelBtn.addEventListener('click', function() {
+                modalTitle.innerHTML = '<i class="fas fa-user-plus text-blue-500 mr-2"></i> Add New Personnel';
+                personnelForm.reset();
+                personnelIdInput.value = '';
+                personnelModal.classList.remove('hidden');
+            });
+            
+            // Close modal buttons
+            cancelPersonnelBtn.addEventListener('click', function() {
+                personnelModal.classList.add('hidden');
+            });
+            
+            closeModalBtn.addEventListener('click', function() {
+                personnelModal.classList.add('hidden');
+            });
+            
+            // Form submission
+            personnelForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const id = personnelIdInput.value ? parseInt(personnelIdInput.value) : personnel.length > 0 ? Math.max(...personnel.map(p => p.id)) + 1 : 1;
+                const name = document.getElementById('personnelName').value;
+                const rank = document.getElementById('rank').value;
+                const badgeNumber = document.getElementById('badgeNumber').value;
+                const unit = document.getElementById('unit').value;
+                const clearanceLevel = document.getElementById('clearanceLevel').value;
+                const status = document.getElementById('status').value;
+                const weaponsAssigned = document.getElementById('weaponsAssigned').value
+                    .split(',')
+                    .map(weapon => weapon.trim())
+                    .filter(weapon => weapon !== '');
+                
+                if (personnelIdInput.value) {
+                    // Edit existing personnel
+                    const index = personnel.findIndex(p => p.id === parseInt(personnelIdInput.value));
+                    if (index !== -1) {
+                        personnel[index] = { id, name, rank, badgeNumber, unit, clearanceLevel, status, weaponsAssigned };
+                    }
+                } else {
+                    // Add new personnel
+                    personnel.push({ id, name, rank, badgeNumber, unit, clearanceLevel, status, weaponsAssigned });
                 }
-            } else {
-                // Add new personnel
-                personnel.push({ id, name, rank, badgeNumber, unit, clearanceLevel, weaponsAssigned });
-            }
+                
+                applyFilters(); // Apply current filters to the updated data
+                personnelModal.classList.add('hidden');
+            });
             
-            applyFilters(); // Apply current filters to the updated data
-            personnelModal.classList.add('hidden');
+            // Pagination buttons
+            document.getElementById('prevPageBtn').addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPersonnelTable();
+                }
+            });
+            
+            document.getElementById('nextPageBtn').addEventListener('click', function() {
+                const totalPages = Math.ceil(personnel.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPersonnelTable();
+                }
+            });
+            
+            // Export button
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                // Create CSV content
+                let csv = 'ID,Name,Rank,Badge Number,Unit,Clearance Level,Status,Assigned Weapons\n';
+                personnel.forEach(person => {
+                    const weapons = person.weaponsAssigned ? person.weaponsAssigned.join('|') : '';
+                    csv += `${person.id},"${person.name}","${person.rank}","${person.badgeNumber}","${person.unit}","${person.clearanceLevel}","${person.status}","${weapons}"\n`;
+                });
+                
+                // Create download link
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'personnel_export.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            
+            // Initial render
+            renderPersonnelTable();
         });
 
         // Edit personnel
         function editPersonnel(id) {
             const person = personnel.find(p => p.id === id);
             if (person) {
-                modalTitle.textContent = 'Edit Personnel';
+                modalTitle.innerHTML = '<i class="fas fa-user-edit text-blue-500 mr-2"></i> Edit Personnel';
                 personnelIdInput.value = person.id;
                 document.getElementById('personnelName').value = person.name;
                 document.getElementById('rank').value = person.rank;
                 document.getElementById('badgeNumber').value = person.badgeNumber;
                 document.getElementById('unit').value = person.unit;
                 document.getElementById('clearanceLevel').value = person.clearanceLevel;
+                document.getElementById('status').value = person.status || 'Active';
                 document.getElementById('weaponsAssigned').value = person.weaponsAssigned ? person.weaponsAssigned.join(', ') : '';
                 
                 personnelModal.classList.remove('hidden');

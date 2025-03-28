@@ -1343,21 +1343,32 @@
     }, 3000);
 }
 
-// Populate personnel filter with unique names
+// Populate personnel filter with unique names from logs
 function populatePersonnelFilter() {
+    // Get the select element
     const personnelFilter = document.getElementById('personnelFilter');
-    const uniquePersonnel = [...new Set(logs.map(log => log.personnel))].sort();
-    
-    // Clear any existing options except the first one
-    while (personnelFilter.options.length > 1) {
-        personnelFilter.remove(1);
+    if (!personnelFilter) {
+        console.error('Personnel filter element not found');
+        return;
     }
     
-    // Add personnel options
-    uniquePersonnel.forEach(person => {
-        const option = document.createElement('option');
-        option.value = person;
-        option.textContent = person;
-        personnelFilter.appendChild(option);
-    });
+    try {
+        // Extract unique personnel names and sort them
+        const uniquePersonnel = [...new Set(logs.map(log => log.personnel))].sort();
+        
+        // Clear any existing options except the first one (All Personnel)
+        while (personnelFilter.options.length > 1) {
+            personnelFilter.remove(1);
+        }
+        
+        // Add personnel options
+        uniquePersonnel.forEach(person => {
+            const option = document.createElement('option');
+            option.value = person;
+            option.textContent = person;
+            personnelFilter.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error populating personnel filter:', error);
+    }
 }
