@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
-    # Manual trigger
 
 jobs:
   validate:
@@ -16,14 +15,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Debug Cache Path
+        run: npm config get cache
 
       - name: Install dependencies
+        run: npm ci
+
+      - name: Install Validators
         run: |
           npm install -g html-validate stylelint stylelint-config-standard
 
@@ -40,12 +48,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Debug Cache Path
+        run: npm config get cache
 
       - name: Install ESLint
         run: npm install -g eslint
@@ -60,12 +74,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Debug Cache Path
+        run: npm config get cache
 
       - name: Install link checker
         run: npm install -g broken-link-checker
@@ -88,14 +108,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Debug Cache Path
+        run: npm config get cache
 
       - name: Install dependencies
+        run: npm ci
+
+      - name: Install minify
         run: npm install -g minify
 
       - name: Optimize HTML files
