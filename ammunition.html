@@ -112,35 +112,45 @@
             </div>
         </div>
         
-        <!-- Search and Filters -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div class="lg:col-span-2">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div class="relative flex-grow">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input id="searchAmmo" type="text" placeholder="Search ammunition..." 
-                            class="block w-full pl-10 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Enhanced Search and Filter Bar -->
+        <div class="bg-gray-800 rounded-lg shadow-lg mb-6">
+            <!-- Main Search Bar and Action Buttons -->
+            <div class="flex flex-col lg:flex-row p-5 gap-4 border-b border-gray-700">
+                <div class="flex-grow relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
                     </div>
-                    <div class="flex space-x-2 flex-shrink-0">
-                        <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
-                            <i class="fas fa-file-export mr-2"></i> Export
-                        </button>
-                        <button id="printBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
-                            <i class="fas fa-print mr-2"></i> Print
-                        </button>
-                        <button id="addAmmoBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200 shadow-lg">
-                            <i class="fas fa-plus mr-2"></i> Add
-                        </button>
-                    </div>
+                    <input type="text" id="searchInput" placeholder="Search items..." 
+                        class="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="filterToggleBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-filter mr-2"></i> Filters
+                        <span id="activeFiltersCount" class="ml-2 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    </button>
+                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                    <button id="addItemBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i> Add Item
+                    </button>
                 </div>
             </div>
-            <div class="flex justify-end">
-                <button id="filtersToggle" class="flex items-center bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md w-full justify-center lg:w-auto">
-                    <i class="fas fa-filter mr-2 text-blue-400"></i> Filters
-                    <i class="fas fa-chevron-down ml-2 text-gray-400 transition-transform duration-200" id="filterChevron"></i>
-                </button>
+            
+            <!-- Collapsible Filter Panel -->
+            <div id="filterPanel" class="p-5 border-t border-gray-700 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <!-- Filter dropdowns go here -->
+                </div>
+                
+                <div class="flex justify-between mt-4 pt-3 border-t border-gray-700">
+                    <div class="text-sm text-gray-400">
+                        <span id="filterResultCount">0</span> results found
+                    </div>
+                    <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center text-sm transition-colors duration-200">
+                        <i class="fas fa-times mr-2"></i> Clear Filters
+                    </button>
+                </div>
             </div>
         </div>
         

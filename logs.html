@@ -124,62 +124,42 @@
             </div>
         </div>
         
-        <!-- Enhanced Search and Filter Controls -->
-        <div class="bg-gray-800 p-5 rounded-lg shadow-lg mb-6">
-            <div class="flex flex-col lg:flex-row justify-between mb-4">
-                <div class="flex-grow lg:mr-4 mb-3 lg:mb-0">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" id="searchLogs" placeholder="Search logs by type, item, personnel, or description..." 
-                            class="block w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Enhanced Search and Filter Bar -->
+        <div class="bg-gray-800 rounded-lg shadow-lg mb-6">
+            <!-- Main Search Bar and Action Buttons -->
+            <div class="flex flex-col lg:flex-row p-5 gap-4 border-b border-gray-700">
+                <div class="flex-grow relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
                     </div>
+                    <input type="text" id="searchInput" placeholder="Search items..." 
+                        class="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                 </div>
-                <div class="flex">
-                    <button id="exportLogsBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center mr-2">
+                <div class="flex flex-wrap gap-2">
+                    <button id="filterToggleBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-filter mr-2"></i> Filters
+                        <span id="activeFiltersCount" class="ml-2 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    </button>
+                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
                         <i class="fas fa-file-export mr-2"></i> Export
                     </button>
-                    <button id="printLogsBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md flex items-center mr-2">
-                        <i class="fas fa-print mr-2"></i> Print
-                    </button>
-                    <button id="addLogBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center">
-                        <i class="fas fa-plus mr-2"></i> Add Log
+                    <button id="addItemBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i> Add Item
                     </button>
                 </div>
             </div>
             
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label for="logDateFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Date Range</label>
-                        <div class="flex">
-                            <input type="date" id="logDateFilterStart" class="w-full p-2 bg-gray-700 rounded-l-md border border-gray-600">
-                            <span class="bg-gray-600 px-2 flex items-center">to</span>
-                            <input type="date" id="logDateFilterEnd" class="w-full p-2 bg-gray-700 rounded-r-md border border-gray-600">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="logTypeFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Type</label>
-                        <select id="logTypeFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Types</option>
-                            <option value="Checkout">Checkout</option>
-                            <option value="Return">Return</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Inspection">Inspection</option>
-                            <option value="Incident">Incident</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="personnelFilter" class="block text-sm font-medium text-gray-400 mb-1">Filter by Personnel</label>
-                        <select id="personnelFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Personnel</option>
-                            <!-- Will be populated dynamically -->
-                        </select>
-                    </div>
+            <!-- Collapsible Filter Panel -->
+            <div id="filterPanel" class="p-5 border-t border-gray-700 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <!-- Filter dropdowns go here -->
                 </div>
-                <div class="mt-4 md:mt-0"> 
-                    <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
+                
+                <div class="flex justify-between mt-4 pt-3 border-t border-gray-700">
+                    <div class="text-sm text-gray-400">
+                        <span id="filterResultCount">0</span> results found
+                    </div>
+                    <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center text-sm transition-colors duration-200">
                         <i class="fas fa-times mr-2"></i> Clear Filters
                     </button>
                 </div>

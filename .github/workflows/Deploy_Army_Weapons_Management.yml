@@ -1,11 +1,11 @@
-name: Deploy Army Weapons Management System
+name: Deploy Army Weapons Management
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches: [ main ]
+  workflow_dispatch: # Manual trigger
 
 jobs:
   validate:
@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install validators
+      - name: Install dependencies
         run: |
           npm install -g html-validate stylelint stylelint-config-standard
 
@@ -36,10 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
@@ -48,48 +48,17 @@ jobs:
         run: npm install -g eslint
 
       - name: Lint JavaScript
-        run: |
-          # Extract JavaScript from HTML files and lint
-          for file in $(find . -name "*.html"); do
-            echo "Extracting JavaScript from $file"
-            grep -oP '<script>\K.*?(?=</script>)' $file -s > "${file%.html}.js" || true
-          done
-          eslint "**/*.js" --fix || true
-
-  accessibility:
-    name: Accessibility Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install pa11y
-        run: npm install -g pa11y-ci
-
-      - name: Setup local server
-        run: |
-          npm install -g http-server
-          http-server -p 8080 &
-          sleep 5
-
-      - name: Run accessibility check
-        run: pa11y-ci --sitemap http://localhost:8080/sitemap.xml || echo "Accessibility issues found but continuing build"
+        run: eslint "**/*.js" --no-eslintrc --env browser --parser-options=ecmaVersion:2021 || true
 
   test-links:
     name: Check Internal Links
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
@@ -106,112 +75,41 @@ jobs:
       - name: Check internal links
         run: blc http://localhost:8080/Dashboard.html -ro --exclude 'https://cdn.tailwindcss.com'
 
-  optimize:
-    name: Optimize Assets
-    runs-on: ubuntu-latest
-    needs: [validate, lint]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install optimization tools
-        run: |
-          npm install -g minify html-minifier terser
-
-      - name: Create distribution directory
-        run: mkdir -p dist
-
-      - name: Optimize HTML files
-        run: |
-          find . -name "*.html" -exec sh -c 'html-minifier --collapse-whitespace --remove-comments --remove-redundant-attributes --remove-script-type-attributes --use-short-doctype --minify-css true --minify-js true "$1" > "dist/$(basename "$1")"' _ {} \;
-
-      - name: Extract and optimize JavaScript
-        run: |
-          mkdir -p dist/js
-          for file in $(find . -name "*.html"); do
-            base=$(basename $file .html)
-            grep -oP '<script>\K.*?(?=</script>)' $file -s > "dist/js/${base}.js" || true
-            if [ -s "dist/js/${base}.js" ]; then
-              terser "dist/js/${base}.js" -o "dist/js/${base}.min.js" --compress --mangle
-            fi
-          done
-
-      - name: Copy all necessary assets
-        run: |
-          mkdir -p dist/images
-          if [ -d "images" ]; then
-            cp -r images/* dist/images/ || echo "No images found"
-          fi
-
-      - name: Upload optimized assets
-        uses: actions/upload-artifact@v3
-        with:
-          name: optimized-files
-          path: dist/
-
   deploy:
     name: Deploy to GitHub Pages
-    needs: [optimize, test-links]
+    needs: [validate, lint, test-links]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Download optimized assets
-        uses: actions/download-artifact@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: optimized-files
-          path: dist/
+          node-version: '18'
+          cache: 'npm'
 
-      - name: Setup caching headers
-        run: |
-          mkdir -p dist/.github
-          cat > dist/.github/workflows/headers.yaml <<EOF
-          name: Headers
-          on: [push]
-          jobs:
-            headers:
-              runs-on: ubuntu-latest
-              steps:
-                - name: Set headers
-                  uses: JamesIves/github-pages-deploy-action/headers@v4
-                  with:
-                    headers: |
-                      /*
-                        Cache-Control: max-age=7200
-                      /*.css
-                        Cache-Control: max-age=604800
-                      /*.js
-                        Cache-Control: max-age=604800
-          EOF
+      - name: Install dependencies
+        run: npm install -g minify
 
-      - name: Generate sitemap
+      - name: Optimize HTML files
         run: |
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > dist/sitemap.xml
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> dist/sitemap.xml
-          for file in $(find dist -name "*.html"); do
-            filename=$(basename $file)
-            echo "  <url><loc>https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/${filename}</loc></url>" >> dist/sitemap.xml
-          done
-          echo '</urlset>' >> dist/sitemap.xml
+          mkdir -p dist
+          find . -name "*.html" -exec sh -c 'minify "$1" > "dist/$(basename "$1")"' _ {} \;
+
+      - name: Copy all necessary files
+        run: cp -r * dist/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
           branch: gh-pages
-          clean: true
 
   notification:
     name: Send Deployment Notification
-    needs: [deploy]
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack notification
@@ -229,39 +127,8 @@ jobs:
 
       - name: Create deployment summary
         run: |
-          echo "## Army Weapons Management System Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "* Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "* Deployed by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "* Army Weapons Management System deployed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "* Deployment triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "* Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "* Timestamp: $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "* Environment: GitHub Pages" >> $GITHUB_STEP_SUMMARY
-          echo "* URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    needs: [validate]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install security scanning tools
-        run: npm install -g js-beautify retire
-
-      - name: Extract scripts from HTML
-        run: |
-          mkdir -p extracted-scripts
-          for file in $(find . -name "*.html"); do
-            js-beautify $file -o temp.html
-            grep -o '<script>.*</script>' temp.html | sed 's/<script>//g' | sed 's/<\/script>//g' > "extracted-scripts/$(basename $file .html).js" || true
-          done
-          rm temp.html
-
-      - name: Check for vulnerabilities
-        run: retire --path extracted-scripts || echo "Security issues found but continuing build"

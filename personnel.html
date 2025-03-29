@@ -102,76 +102,45 @@
             </div>
         </div>
         
-        <!-- Enhanced Search and Add Section -->
-        <div class="bg-gray-800 p-5 rounded-lg shadow-lg mb-6">
-            <div class="flex flex-col lg:flex-row justify-between mb-4">
-                <div class="flex-grow lg:mr-4 mb-3 lg:mb-0">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" id="searchPersonnel" placeholder="Search by name, rank, badge number or unit..." 
-                            class="block w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Enhanced Search and Filter Bar -->
+        <div class="bg-gray-800 rounded-lg shadow-lg mb-6">
+            <!-- Main Search Bar and Action Buttons -->
+            <div class="flex flex-col lg:flex-row p-5 gap-4 border-b border-gray-700">
+                <div class="flex-grow relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
                     </div>
+                    <input type="text" id="searchInput" placeholder="Search items..." 
+                        class="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                 </div>
-                <div class="flex">
-                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center mr-2">
+                <div class="flex flex-wrap gap-2">
+                    <button id="filterToggleBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-filter mr-2"></i> Filters
+                        <span id="activeFiltersCount" class="ml-2 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    </button>
+                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
                         <i class="fas fa-file-export mr-2"></i> Export
                     </button>
-                    <button id="addPersonnelBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center">
-                        <i class="fas fa-user-plus mr-2"></i> Add Personnel
+                    <button id="addItemBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i> Add Item
                     </button>
                 </div>
             </div>
             
-            <!-- Enhanced Filters with Better UI -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label for="rankFilter" class="block text-sm font-medium text-gray-400 mb-1">Rank</label>
-                    <select id="rankFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Ranks</option>
-                        <option value="Private">Private</option>
-                        <option value="Corporal">Corporal</option>
-                        <option value="Sergeant">Sergeant</option>
-                        <option value="Lieutenant">Lieutenant</option>
-                        <option value="Captain">Captain</option>
-                        <option value="Major">Major</option>
-                        <option value="Colonel">Colonel</option>
-                    </select>
+            <!-- Collapsible Filter Panel -->
+            <div id="filterPanel" class="p-5 border-t border-gray-700 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <!-- Filter dropdowns go here -->
                 </div>
-                <div>
-                    <label for="unitFilter" class="block text-sm font-medium text-gray-400 mb-1">Unit</label>
-                    <select id="unitFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Units</option>
-                        <option value="Alpha Company">Alpha Company</option>
-                        <option value="Bravo Company">Bravo Company</option>
-                        <option value="Charlie Company">Charlie Company</option>
-                    </select>
+                
+                <div class="flex justify-between mt-4 pt-3 border-t border-gray-700">
+                    <div class="text-sm text-gray-400">
+                        <span id="filterResultCount">0</span> results found
+                    </div>
+                    <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center text-sm transition-colors duration-200">
+                        <i class="fas fa-times mr-2"></i> Clear Filters
+                    </button>
                 </div>
-                <div>
-                    <label for="clearanceFilter" class="block text-sm font-medium text-gray-400 mb-1">Clearance</label>
-                    <select id="clearanceFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Clearances</option>
-                        <option value="Level 1">Level 1</option>
-                        <option value="Level 2">Level 2</option>
-                        <option value="Level 3">Level 3</option>
-                        <option value="Level 4">Level 4</option>
-                        <option value="Level 5">Level 5</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="weaponsAssignedFilter" class="block text-sm font-medium text-gray-400 mb-1">Weapons Status</label>
-                    <select id="weaponsAssignedFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Personnel</option>
-                        <option value="with-weapons">With Weapons</option>
-                        <option value="without-weapons">Without Weapons</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
-                    <i class="fas fa-times mr-2"></i> Clear Filters
-                </button>
             </div>
         </div>
         
