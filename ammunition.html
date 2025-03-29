@@ -36,17 +36,33 @@
             <li><a href="storage.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-warehouse mr-1"></i> Storage</a></li>
             <li><a href="logs.html" class="flex items-center px-3 py-2 hover:bg-gray-700 rounded-md"><i class="fas fa-clipboard-list mr-1"></i> Logs</a></li>
         </ul>
-        <div class="ml-4 relative group">
-            <button class="flex items-center text-sm rounded-full focus:outline-none">
-                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User avatar">
-                <span class="ml-2">Admin</span>
+        <!-- Standard User Profile Dropdown for all files -->
+        <div class="ml-4 relative">
+            <button onclick="toggleProfileDropdown(event)" id="profileButton" class="flex items-center focus:outline-none">
+                <img class="h-8 w-8 rounded-full border-2 border-blue-500" src="https://via.placeholder.com/50" alt="User">
+                <span class="ml-2 hidden md:inline">Admin</span>
                 <i class="fas fa-chevron-down ml-1 text-xs"></i>
             </button>
-            <div class="absolute right-0 w-48 mt-2 py-1 bg-gray-800 rounded-md shadow-xl hidden group-hover:block">
-                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Profile</a>
-                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Settings</a>
-                <div class="border-t border-gray-700"></div>
-                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700">Log Out</a>
+            <!-- Profile dropdown menu -->
+            <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20 border border-gray-700">
+                <div class="px-4 py-2 border-b border-gray-700">
+                    <p class="text-sm font-semibold text-white">Admin User</p>
+                    <p class="text-xs text-gray-400">admin@example.com</p>
+                </div>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-user-circle mr-2"></i> My Profile
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-cog mr-2"></i> Settings
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-bell mr-2"></i> Notifications
+                    <span class="bg-red-500 text-white text-xs rounded-full px-1 ml-1">3</span>
+                </a>
+                <div class="border-t border-gray-700 mt-1"></div>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Sign out
+                </a>
             </div>
         </div>
     </nav>
@@ -356,7 +372,24 @@
     </footer>
 
     <script>
-        // Sample ammunition data (using your existing data as a starting point)
+        // Add this at the VERY TOP of your script section
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            if (profileButton && profileDropdown) {
+                if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.add('hidden');
+                }
+            }
+        });
+
+        // Sample ammunition data
         let ammunition = [
             { id: 1, type: "5.56mm NATO", caliber: "5.56mm", quantity: 1200, location: "Storage A", expiryDate: "2027-06-15" },
             { id: 2, type: "7.62mm NATO", caliber: "7.62mm", quantity: 800, location: "Storage B", expiryDate: "2027-05-20" },
@@ -1000,6 +1033,190 @@
                     }, 600); // Short delay for animation
                 });
             }
+        });
+
+        // Standard profile dropdown functionality for all pages
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            
+            if (profileButton && profileDropdown) {
+                profileButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Combined initialization function for all functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown functionality
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            
+            if (profileButton && profileDropdown) {
+                profileButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // Create initial charts
+            createAmmoCharts();
+            
+            // Update dashboard stats and charts on initial load
+            updateAmmoCharts();
+            
+            // Set up refresh button
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    this.classList.add('animate-spin');
+                    
+                    setTimeout(() => {
+                        renderAmmoTable();
+                        updateAmmoCharts();
+                        
+                        // Update last updated time
+                        const now = new Date();
+                        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        document.getElementById('lastUpdated').textContent = `Today, ${timeString}`;
+                        
+                        this.classList.remove('animate-spin');
+                    }, 600); // Short delay for animation
+                });
+            }
+            
+            // Setup filter toggle
+            const filtersToggle = document.getElementById('filtersToggle');
+            const filtersPanel = document.getElementById('filtersPanel');
+            const filterChevron = document.getElementById('filterChevron');
+
+            if (filtersToggle && filtersPanel && filterChevron) {
+                filtersToggle.addEventListener('click', function() {
+                    filtersPanel.classList.toggle('hidden');
+                    
+                    if (filtersPanel.classList.contains('hidden')) {
+                        filterChevron.classList.remove('transform', 'rotate-180');
+                    } else {
+                        filterChevron.classList.add('transform', 'rotate-180');
+                    }
+                });
+            }
+            
+            // Setup search and filters
+            const searchAmmo = document.getElementById('searchInput');
+            const caliberFilter = document.getElementById('caliberFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const expiryFilter = document.getElementById('expiryFilter');
+            const quantityFilter = document.getElementById('quantityFilter');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            
+            if (searchAmmo) searchAmmo.addEventListener('input', applyFilters);
+            if (caliberFilter) caliberFilter.addEventListener('change', applyFilters);
+            if (locationFilter) locationFilter.addEventListener('change', applyFilters);
+            if (expiryFilter) expiryFilter.addEventListener('change', applyFilters);
+            if (quantityFilter) quantityFilter.addEventListener('change', applyFilters);
+            
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', function() {
+                    if (searchAmmo) searchAmmo.value = '';
+                    if (caliberFilter) caliberFilter.value = '';
+                    if (locationFilter) locationFilter.value = '';
+                    if (expiryFilter) expiryFilter.value = '';
+                    if (quantityFilter) quantityFilter.value = '';
+                    
+                    renderAmmoTable();
+                    updateAmmoCharts();
+                    
+                    // Reset filter button appearance
+                    if (filtersToggle) {
+                        filtersToggle.classList.add('bg-gray-800');
+                        filtersToggle.classList.remove('bg-blue-600');
+                    }
+                    
+                    // Remove badge
+                    const filterBadge = document.getElementById('filterBadge');
+                    if (filterBadge) {
+                        filterBadge.remove();
+                    }
+                });
+            }
+            
+            // Setup add ammo functionality
+            const addAmmoBtn = document.getElementById('addItemBtn');
+            const ammoModal = document.getElementById('ammoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const ammoForm = document.getElementById('ammoForm');
+            const cancelAmmoBtn = document.getElementById('cancelAmmoBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const ammoIdInput = document.getElementById('ammoId');
+            
+            if (addAmmoBtn && ammoModal) {
+                addAmmoBtn.addEventListener('click', function() {
+                    modalTitle.textContent = 'Add New Ammunition';
+                    ammoForm.reset();
+                    ammoIdInput.value = '';
+                    ammoModal.classList.remove('hidden');
+                });
+            }
+            
+            if (cancelAmmoBtn && ammoModal) {
+                cancelAmmoBtn.addEventListener('click', function() {
+                    ammoModal.classList.add('hidden');
+                });
+            }
+            
+            if (closeModalBtn && ammoModal) {
+                closeModalBtn.addEventListener('click', function() {
+                    ammoModal.classList.add('hidden');
+                });
+            }
+            
+            if (ammoForm) {
+                ammoForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const id = ammoIdInput.value ? parseInt(ammoIdInput.value) : ammunition.length > 0 ? Math.max(...ammunition.map(a => a.id)) + 1 : 1;
+                    const type = document.getElementById('ammoType').value;
+                    const caliber = document.getElementById('caliber').value;
+                    const quantity = parseInt(document.getElementById('quantity').value);
+                    const location = document.getElementById('location').value;
+                    const expiryDate = document.getElementById('expiryDate').value;
+                    
+                    if (ammoIdInput.value) {
+                        // Edit existing ammunition
+                        const index = ammunition.findIndex(a => a.id === parseInt(ammoIdInput.value));
+                        if (index !== -1) {
+                            ammunition[index] = { id, type, caliber, quantity, location, expiryDate };
+                        }
+                    } else {
+                        // Add new ammunition
+                        ammunition.push({ id, type, caliber, quantity, location, expiryDate });
+                    }
+                                
+                    applyFilters();
+                    updateAmmoCharts();
+                    ammoModal.classList.add('hidden');
+                });
+            }
+            
+            // Initial render
+            renderAmmoTable();
         });
     </script>
 </body>
