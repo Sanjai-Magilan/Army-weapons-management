@@ -85,14 +85,14 @@
             <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg shadow-lg border-l-4 border-blue-500 transition-transform transform hover:scale-105">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-300">Total Types</h3>
-                        <p class="text-3xl font-bold mt-2" id="totalAmmoTypes">5</p>
+                        <h3 class="text-lg font-semibold text-gray-300">Total Ammunition Types</h3>
+                        <p class="text-3xl font-bold mt-2" id="totalAmmoTypes">3</p>
                         <p class="text-sm text-green-400 mt-2">
-                            <i class="fas fa-arrow-up"></i> 8% from last month
+                            <i class="fas fa-arrow-up"></i> 5% from last month
                         </p>
                     </div>
                     <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
-                        <i class="fas fa-box-open text-3xl text-blue-400"></i>
+                        <i class="fas fa-boxes text-3xl text-blue-400"></i>
                     </div>
                 </div>
             </div>
@@ -101,9 +101,9 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-300">Total Rounds</h3>
-                        <p class="text-3xl font-bold mt-2" id="totalAmmoCount">4,500</p>
+                        <p class="text-3xl font-bold mt-2" id="totalAmmoCount">3,500</p>
                         <p class="text-sm text-green-400 mt-2">
-                            <i class="fas fa-arrow-up"></i> 12% from last month
+                            <i class="fas fa-arrow-up"></i> 8% from last month
                         </p>
                     </div>
                     <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
@@ -117,12 +117,12 @@
                     <div>
                         <h3 class="text-lg font-semibold text-gray-300">Expiring Soon</h3>
                         <p class="text-3xl font-bold mt-2" id="expiringSoon">1</p>
-                        <p class="text-sm text-red-400 mt-2">
-                            <i class="fas fa-arrow-up"></i> 1 more than last month
+                        <p class="text-sm text-yellow-400 mt-2">
+                            <i class="fas fa-exclamation-triangle"></i> Requires attention
                         </p>
                     </div>
                     <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
-                        <i class="fas fa-clock text-3xl text-yellow-400"></i>
+                        <i class="fas fa-calendar-times text-3xl text-yellow-400"></i>
                     </div>
                 </div>
             </div>
@@ -136,32 +136,66 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
                     </div>
-                    <input type="text" id="searchInput" placeholder="Search items..." 
+                    <input type="text" id="searchAmmo" placeholder="Search ammunition by type, caliber, location..." 
                         class="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button id="filterToggleBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
+                    <button id="filtersToggle" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
                         <i class="fas fa-filter mr-2"></i> Filters
-                        <span id="activeFiltersCount" class="ml-2 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                        <i id="filterChevron" class="fas fa-chevron-down ml-2 transform transition-transform duration-200"></i>
                     </button>
                     <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
                         <i class="fas fa-file-export mr-2"></i> Export
                     </button>
                     <button id="addItemBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md flex items-center transition-colors duration-200">
-                        <i class="fas fa-plus mr-2"></i> Add Item
+                        <i class="fas fa-plus mr-2"></i> Add Ammunition
                     </button>
                 </div>
             </div>
             
             <!-- Collapsible Filter Panel -->
             <div id="filterPanel" class="p-5 border-t border-gray-700 hidden">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <!-- Filter dropdowns go here -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label for="caliberFilter" class="block text-sm font-medium text-gray-400 mb-1">Caliber</label>
+                        <select id="caliberFilter" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Calibers</option>
+                            <option value="5.56mm">5.56mm</option>
+                            <option value="7.62mm">7.62mm</option>
+                            <option value="9mm">9mm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="locationFilter" class="block text-sm font-medium text-gray-400 mb-1">Location</label>
+                        <select id="locationFilter" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Locations</option>
+                            <option value="Storage A">Storage A</option>
+                            <option value="Storage B">Storage B</option>
+                            <option value="Storage C">Storage C</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="expiryFilter" class="block text-sm font-medium text-gray-400 mb-1">Expiry Status</label>
+                        <select id="expiryFilter" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All</option>
+                            <option value="soon">Expiring Soon (< 6 months)</option>
+                            <option value="future">Good Standing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="quantityFilter" class="block text-sm font-medium text-gray-400 mb-1">Quantity</label>
+                        <select id="quantityFilter" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All</option>
+                            <option value="low">Low (< 500)</option>
+                            <option value="medium">Medium (500-1000)</option>
+                            <option value="high">High (> 1000)</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="flex justify-between mt-4 pt-3 border-t border-gray-700">
                     <div class="text-sm text-gray-400">
-                        <span id="filterResultCount">0</span> results found
+                        <span id="filterResultCount">3</span> results found
                     </div>
                     <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center text-sm transition-colors duration-200">
                         <i class="fas fa-times mr-2"></i> Clear Filters
@@ -170,98 +204,121 @@
             </div>
         </div>
         
-        <!-- Expanded Filters -->
-        <div id="filtersPanel" class="bg-gray-800 rounded-lg shadow-lg p-5 mb-6 hidden">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label for="caliberFilter" class="block text-sm font-medium text-gray-400 mb-1">Caliber</label>
-                    <select id="caliberFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Calibers</option>
-                        <option value="5.56mm">5.56mm</option>
-                        <option value="7.62mm">7.62mm</option>
-                        <option value="9mm">9mm</option>
-                        <option value="12.7mm">12.7mm</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="locationFilter" class="block text-sm font-medium text-gray-400 mb-1">Location</label>
-                    <select id="locationFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Locations</option>
-                        <option value="Storage A">Storage A</option>
-                        <option value="Storage B">Storage B</option>
-                        <option value="Storage C">Storage C</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="expiryFilter" class="block text-sm font-medium text-gray-400 mb-1">Expiry</label>
-                    <select id="expiryFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Expiry</option>
-                        <option value="soon">Expiring Soon (< 6 months)</option>
-                        <option value="future">Future (> 6 months)</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="quantityFilter" class="block text-sm font-medium text-gray-400 mb-1">Quantity</label>
-                    <select id="quantityFilter" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Quantities</option>
-                        <option value="low">Low Stock (< 500)</option>
-                        <option value="medium">Medium Stock (500-1000)</option>
-                        <option value="high">High Stock (> 1000)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <button id="clearFiltersBtn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md flex items-center">
-                    <i class="fas fa-times mr-2"></i> Clear Filters
-                </button>
-            </div>
-        </div>
-
         <!-- Ammunition Table with Dashboard Style -->
         <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-700">
-                    <thead>
+                    <thead class="bg-gray-750">
                         <tr>
-                            <th class="p-4 bg-gray-750">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                 <div class="flex items-center">
-                                    <input id="selectAll" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 cursor-pointer">
+                                    <input id="selectAll" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 focus:ring-offset-gray-800">
+                                    <span class="ml-3">ID</span>
                                 </div>
                             </th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Caliber</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Location</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Expiry Date</th>
-                            <th class="py-3 px-4 bg-gray-750 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                            <th class="py-3 px-4 bg-gray-750 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Caliber</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Quantity</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Location</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Expiry Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="ammoTableBody" class="divide-y divide-gray-700">
-                        <!-- Will be populated by JavaScript -->
+                        <!-- Table body will be populated by JavaScript -->
+                        <tr class="hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 focus:ring-offset-gray-800" data-id="1">
+                                    <span class="ml-3">1</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">5.56mm NATO</td>
+                            <td class="px-6 py-4 whitespace-nowrap">5.56mm</td>
+                            <td class="px-6 py-4 whitespace-nowrap">1,200</td>
+                            <td class="px-6 py-4 whitespace-nowrap">Storage A</td>
+                            <td class="px-6 py-4 whitespace-nowrap">June 15, 2027</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-700 text-green-100">Good</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-blue-400 hover:text-blue-300 mr-3 edit-btn" data-id="1">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-400 hover:text-red-300 delete-btn" data-id="1">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Add more sample rows for demonstration -->
+                        <tr class="hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 focus:ring-offset-gray-800" data-id="2">
+                                    <span class="ml-3">2</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">7.62mm NATO</td>
+                            <td class="px-6 py-4 whitespace-nowrap">7.62mm</td>
+                            <td class="px-6 py-4 whitespace-nowrap">800</td>
+                            <td class="px-6 py-4 whitespace-nowrap">Storage B</td>
+                            <td class="px-6 py-4 whitespace-nowrap">May 20, 2027</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-700 text-green-100">Good</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-blue-400 hover:text-blue-300 mr-3 edit-btn" data-id="2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-400 hover:text-red-300 delete-btn" data-id="2">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-500 focus:ring-blue-500 focus:ring-offset-gray-800" data-id="3">
+                                    <span class="ml-3">3</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">9mm Parabellum</td>
+                            <td class="px-6 py-4 whitespace-nowrap">9mm</td>
+                            <td class="px-6 py-4 whitespace-nowrap">1,500</td>
+                            <td class="px-6 py-4 whitespace-nowrap">Storage C</td>
+                            <td class="px-6 py-4 whitespace-nowrap">Jan 10, 2028</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-700 text-green-100">Good</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-blue-400 hover:text-blue-300 mr-3 edit-btn" data-id="3">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-400 hover:text-red-300 delete-btn" data-id="3">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
             
-            <!-- Bulk Actions -->
+            <!-- Bulk Actions Bar -->
             <div id="bulkActionsBar" class="hidden bg-gray-750 p-3 flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="bg-blue-500 bg-opacity-20 p-2 rounded-full mr-3">
-                        <i class="fas fa-layer-group text-blue-400"></i>
-                    </div>
-                    <span class="mr-2"><span id="selectedCount" class="font-bold">0</span> items selected</span>
+                    <i class="fas fa-check-circle text-blue-400 mr-2"></i>
+                    <span><span id="selectedCount">0</span> items selected</span>
                 </div>
                 <div class="flex space-x-2">
-                    <button id="bulkDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                    <button id="bulkExportBtn" class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm flex items-center">
+                        <i class="fas fa-file-export mr-1"></i> Export
+                    </button>
+                    <button id="bulkDeleteBtn" class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm flex items-center">
                         <i class="fas fa-trash mr-1"></i> Delete
                     </button>
-                    <button id="bulkMoveBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
-                        <i class="fas fa-exchange-alt mr-1"></i> Move
-                    </button>
-                    <button id="bulkExportBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm flex items-center">
-                        <i class="fas fa-file-export mr-1"></i> Export
+                    <button id="cancelBulkBtn" class="px-3 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm flex items-center">
+                        <i class="fas fa-times mr-1"></i> Cancel
                     </button>
                 </div>
             </div>
@@ -271,8 +328,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-gray-800 rounded-lg shadow-lg p-6">
                 <h3 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-chart-pie mr-2 text-blue-400"></i>
-                    Ammunition by Caliber
+                    <i class="fas fa-chart-pie text-blue-400 mr-2"></i>
+                    Ammunition by Type
                 </h3>
                 <div class="h-64">
                     <canvas id="ammoTypeChart"></canvas>
@@ -281,8 +338,8 @@
             
             <div class="bg-gray-800 rounded-lg shadow-lg p-6">
                 <h3 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-chart-bar mr-2 text-green-400"></i>
-                    Stock Levels by Location
+                    <i class="fas fa-chart-bar text-green-400 mr-2"></i>
+                    Ammunition by Location
                 </h3>
                 <div class="h-64">
                     <canvas id="locationChart"></canvas>
@@ -315,7 +372,7 @@
         <div class="bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-2xl" id="modalContent">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
                 <h3 id="modalTitle" class="text-xl font-bold flex items-center">
-                    <i class="fas fa-box-open text-blue-500 mr-2"></i>
+                    <i class="fas fa-plus-circle text-blue-500 mr-2"></i>
                     Add New Ammunition
                 </h3>
                 <button id="closeModalBtn" class="text-gray-400 hover:text-white">
@@ -327,40 +384,57 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="ammoType" class="block text-sm font-medium text-gray-400 mb-1">
-                            Type <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="ammoType" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <label for="ammoType" class="block text-sm font-medium text-gray-400 mb-1">Ammunition Type</label>
+                        <input type="text" id="ammoType" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5.56mm NATO">
                     </div>
                     <div>
-                        <label for="caliber" class="block text-sm font-medium text-gray-400 mb-1">
-                            Caliber <span class="text-red-500">*</span>
-                        </label>
-                        <select id="caliber" class="w-full p-2 bg-gray-700 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                            <option value="">Select Caliber</option>
+                        <label for="caliber" class="block text-sm font-medium text-gray-400 mb-1">Caliber</label>
+                        <select id="caliber" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="5.56mm">5.56mm</option>
                             <option value="7.62mm">7.62mm</option>
                             <option value="9mm">9mm</option>
-                            <option value="12.7mm">12.7mm</option>
-                            <option value="Other">Other</option>
+                            <option value=".45 ACP">.45 ACP</option>
+                            <option value="12 Gauge">12 Gauge</option>
+                            <option value=".50 BMG">.50 BMG</option>
                         </select>
                     </div>
                     <div>
                         <label for="quantity" class="block text-sm font-medium text-gray-400 mb-1">Quantity</label>
-                        <input type="number" id="quantity" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <input type="number" id="quantity" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="1">
                     </div>
                     <div>
-                        <label for="location" class="block text-sm font-medium text-gray-400 mb-1">Location</label>
-                        <input type="text" id="location" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <label for="location" class="block text-sm font-medium text-gray-400 mb-1">Storage Location</label>
+                        <select id="location" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Storage A">Storage A</option>
+                            <option value="Storage B">Storage B</option>
+                            <option value="Storage C">Storage C</option>
+                            <option value="Field Use">Field Use</option>
+                        </select>
                     </div>
                     <div>
                         <label for="expiryDate" class="block text-sm font-medium text-gray-400 mb-1">Expiry Date</label>
-                        <input type="date" id="expiryDate" class="w-full p-2 bg-gray-700 rounded-md border border-gray-600">
+                        <input type="date" id="expiryDate" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                        <select id="status" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Available">Available</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Low Stock">Low Stock</option>
+                        </select>
                     </div>
                 </div>
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-400 mb-1">Notes</label>
+                    <textarea id="notes" rows="3" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Add any additional information"></textarea>
+                </div>
                 <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancelAmmoBtn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Save</button>
+                    <button type="button" id="cancelAmmoBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center">
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save Ammunition
+                    </button>
                 </div>
             </form>
         </div>
@@ -372,22 +446,110 @@
     </footer>
 
     <script>
-        // Add this at the VERY TOP of your script section
-        function toggleProfileDropdown(event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('profileDropdown');
-            dropdown.classList.toggle('hidden');
+        // Consolidate all initialization code into a single DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all UI components
+            initializeUI();
+            
+            // Create initial charts
+            createAmmoCharts();
+            
+            // Update dashboard stats and charts on initial load
+            updateAmmoCharts();
+            
+            // Initial render of table data
+            renderAmmoTable();
+        });
+
+        // Main initialization function for all UI components
+        function initializeUI() {
+            // Profile dropdown
+            initializeProfileDropdown();
+            
+            // Filter panel functionality
+            initializeFilterPanel();
+            
+            // Add/edit/delete functionality
+            initializeCRUDOperations();
+            
+            // Export functionality
+            initializeExportFeatures();
+            
+            // Table selection functionality
+            initializeTableSelection();
+            
+            // Refresh button
+            initializeRefreshButton();
         }
-        
-        document.addEventListener('click', function(event) {
+
+        function initializeProfileDropdown() {
             const profileButton = document.getElementById('profileButton');
             const profileDropdown = document.getElementById('profileDropdown');
+            
             if (profileButton && profileDropdown) {
-                if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.add('hidden');
-                }
+                profileButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                });
+                
+                document.addEventListener('click', function(event) {
+                    if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                    }
+                });
             }
-        });
+        }
+
+        function initializeFilterPanel() {
+            // Get all filter related elements
+            const filtersToggle = document.getElementById('filtersToggle');
+            const filterPanel = document.getElementById('filterPanel'); // Match your HTML ID
+            const filterChevron = document.getElementById('filterChevron');
+            const searchAmmo = document.getElementById('searchAmmo'); // Match your HTML ID
+            const caliberFilter = document.getElementById('caliberFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const expiryFilter = document.getElementById('expiryFilter');
+            const quantityFilter = document.getElementById('quantityFilter');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            
+            // Toggle filter panel visibility
+            if (filtersToggle && filterPanel && filterChevron) {
+                filtersToggle.addEventListener('click', function() {
+                    filterPanel.classList.toggle('hidden');
+                    filterChevron.classList.toggle('transform');
+                    filterChevron.classList.toggle('rotate-180');
+                });
+            }
+            
+            // Attach event listeners to filter inputs if they exist
+            if (searchAmmo) searchAmmo.addEventListener('input', applyFilters);
+            if (caliberFilter) caliberFilter.addEventListener('change', applyFilters);
+            if (locationFilter) locationFilter.addEventListener('change', applyFilters);
+            if (expiryFilter) expiryFilter.addEventListener('change', applyFilters);
+            if (quantityFilter) quantityFilter.addEventListener('change', applyFilters);
+            
+            // Clear filters button
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', function() {
+                    if (searchAmmo) searchAmmo.value = '';
+                    if (caliberFilter) caliberFilter.value = '';
+                    if (locationFilter) locationFilter.value = '';
+                    if (expiryFilter) expiryFilter.value = '';
+                    if (quantityFilter) quantityFilter.value = '';
+                    
+                    applyFilters();
+                    
+                    // Reset filter button appearance
+                    if (filtersToggle) {
+                        filtersToggle.classList.remove('bg-blue-600');
+                        filtersToggle.classList.add('bg-gray-700');
+                        
+                        const filterBadge = document.getElementById('filterBadge');
+                        if (filterBadge) filterBadge.remove();
+                    }
+                });
+            }
+        }
 
         // Sample ammunition data
         let ammunition = [
@@ -1187,6 +1349,7 @@
                 });
             }
             
+            // Fix form submission handler
             if (ammoForm) {
                 ammoForm.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -1197,16 +1360,38 @@
                     const quantity = parseInt(document.getElementById('quantity').value);
                     const location = document.getElementById('location').value;
                     const expiryDate = document.getElementById('expiryDate').value;
+                    const status = document.getElementById('status').value;
+                    const notes = document.getElementById('notes').value;
                     
                     if (ammoIdInput.value) {
                         // Edit existing ammunition
                         const index = ammunition.findIndex(a => a.id === parseInt(ammoIdInput.value));
                         if (index !== -1) {
-                            ammunition[index] = { id, type, caliber, quantity, location, expiryDate };
+                            ammunition[index] = { 
+                                id, 
+                                type, 
+                                caliber, 
+                                quantity, 
+                                location, 
+                                expiryDate,
+                                status,
+                                notes 
+                            };
+                            showNotification(`Ammunition ${id} updated successfully`, 'success');
                         }
                     } else {
                         // Add new ammunition
-                        ammunition.push({ id, type, caliber, quantity, location, expiryDate });
+                        ammunition.push({ 
+                            id, 
+                            type, 
+                            caliber, 
+                            quantity, 
+                            location, 
+                            expiryDate,
+                            status,
+                            notes 
+                        });
+                        showNotification('New ammunition added successfully', 'success');
                     }
                                 
                     applyFilters();
@@ -1218,6 +1403,338 @@
             // Initial render
             renderAmmoTable();
         });
+
+        // Standardized filter panel functionality
+
+        // Setup filter toggle with consistent variable names
+        document.addEventListener('DOMContentLoaded', function() {
+            // Define filter toggle functionality
+            const filtersToggle = document.getElementById('filtersToggle');
+            const filterPanel = document.getElementById('filterPanel'); // Match the ID in your HTML
+            const filterChevron = document.getElementById('filterChevron');
+
+            if (filtersToggle && filterPanel && filterChevron) {
+                filtersToggle.addEventListener('click', function() {
+                    filterPanel.classList.toggle('hidden');
+                    
+                    // Rotate chevron icon when toggled
+                    filterChevron.classList.toggle('transform');
+                    filterChevron.classList.toggle('rotate-180');
+                });
+            }
+            
+            // Get all filter elements with consistent IDs
+            const searchInput = document.getElementById('searchAmmo');
+            const caliberFilter = document.getElementById('caliberFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const expiryFilter = document.getElementById('expiryFilter');
+            const quantityFilter = document.getElementById('quantityFilter');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            
+            // Attach event listeners if elements exist
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
+            if (caliberFilter) caliberFilter.addEventListener('change', applyFilters);
+            if (locationFilter) locationFilter.addEventListener('change', applyFilters);
+            if (expiryFilter) expiryFilter.addEventListener('change', applyFilters);
+            if (quantityFilter) quantityFilter.addEventListener('change', applyFilters);
+            
+            // Clear filters functionality
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', function() {
+                    if (searchInput) searchInput.value = '';
+                    if (caliberFilter) caliberFilter.value = '';
+                    if (locationFilter) locationFilter.value = '';
+                    if (expiryFilter) expiryFilter.value = '';
+                    if (quantityFilter) quantityFilter.value = '';
+                    
+                    // Reset results
+                    applyFilters();
+                    
+                    // Reset filter button appearance
+                    if (filtersToggle) {
+                        filtersToggle.classList.remove('bg-blue-600');
+                        filtersToggle.classList.add('bg-gray-700');
+                        
+                        // Remove filter badge if it exists
+                        const filterBadge = document.getElementById('filterBadge');
+                        if (filterBadge) filterBadge.remove();
+                    }
+                });
+            }
+        });
+
+        // Define the applyFilters function once, with proper error handling
+        function applyFilters() {
+            try {
+                let filteredData = ammunition;  // Use appropriate data array based on page
+                const resultCount = document.getElementById('filterResultCount');
+                
+                // Get filter values with null checks
+                const searchTerm = document.getElementById('searchAmmo')?.value?.toLowerCase() || '';
+                const caliberValue = document.getElementById('caliberFilter')?.value || '';
+                const locationValue = document.getElementById('locationFilter')?.value || '';
+                const expiryValue = document.getElementById('expiryFilter')?.value || '';
+                const quantityValue = document.getElementById('quantityFilter')?.value || '';
+                
+                // Apply search filter if term exists
+                if (searchTerm) {
+                    filteredData = filteredData.filter(item => 
+                        item.type?.toLowerCase().includes(searchTerm) ||
+                        item.caliber?.toLowerCase().includes(searchTerm) ||
+                        item.location?.toLowerCase().includes(searchTerm) ||
+                        item.notes?.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply caliber filter
+                if (caliberValue) {
+                    filteredData = filteredData.filter(item => item.caliber === caliberValue);
+                }
+                
+                // Apply location filter
+                if (locationValue) {
+                    filteredData = filteredData.filter(item => item.location === locationValue);
+                }
+                
+                // Apply expiry filter
+                if (expiryValue) {
+                    const today = new Date();
+                    const sixMonthsFromNow = new Date();
+                    sixMonthsFromNow.setMonth(today.getMonth() + 6);
+                    
+                    if (expiryValue === 'soon') {
+                        filteredData = filteredData.filter(item => {
+                            const expiryDate = new Date(item.expiryDate);
+                            return expiryDate <= sixMonthsFromNow;
+                        });
+                    } else if (expiryValue === 'future') {
+                        filteredData = filteredData.filter(item => {
+                            const expiryDate = new Date(item.expiryDate);
+                            return expiryDate > sixMonthsFromNow;
+                        });
+                    }
+                }
+                
+                // Apply quantity filter
+                if (quantityValue) {
+                    if (quantityValue === 'low') {
+                        filteredData = filteredData.filter(item => item.quantity < 500);
+                    } else if (quantityValue === 'medium') {
+                        filteredData = filteredData.filter(item => item.quantity >= 500 && item.quantity <= 1000);
+                    } else if (quantityValue === 'high') {
+                        filteredData = filteredData.filter(item => item.quantity > 1000);
+                    }
+                }
+                
+                // Update UI
+                renderAmmoTable(filteredData);
+                updateAmmoCharts(filteredData);
+                
+                // Update result count if element exists
+                if (resultCount) {
+                    resultCount.textContent = filteredData.length;
+                }
+                
+                // Update filter indicator
+                updateFilterIndicator(searchTerm, caliberValue, locationValue, expiryValue, quantityValue);
+                
+            } catch (error) {
+                console.error("Error applying filters:", error);
+            }
+        }
+
+        // Helper function to update filter indicators
+        function updateFilterIndicator(searchTerm, caliberValue, locationValue, expiryValue, quantityValue) {
+            const filtersToggle = document.getElementById('filtersToggle');
+            if (!filtersToggle) return;
+            
+            const isFiltered = !!(searchTerm || caliberValue || locationValue || expiryValue || quantityValue);
+            
+            if (isFiltered) {
+                filtersToggle.classList.remove('bg-gray-700');
+                filtersToggle.classList.add('bg-blue-600');
+                
+                // Count active filters for badge
+                const activeFilters = [caliberValue, locationValue, expiryValue, quantityValue]
+                    .filter(Boolean).length + (searchTerm ? 1 : 0);
+                
+                // Add or update filter badge
+                let filterBadge = document.getElementById('filterBadge');
+                if (!filterBadge && activeFilters > 0) {
+                    filterBadge = document.createElement('span');
+                    filterBadge.id = 'filterBadge';
+                    filterBadge.className = 'ml-2 bg-white text-blue-600 text-xs px-2 py-0.5 rounded-full font-bold';
+                    filtersToggle.appendChild(filterBadge);
+                }
+                
+                if (filterBadge) {
+                    filterBadge.textContent = activeFilters;
+                }
+            } else {
+                filtersToggle.classList.remove('bg-blue-600');
+                filtersToggle.classList.add('bg-gray-700');
+                
+                // Remove badge when no filters active
+                const filterBadge = document.getElementById('filterBadge');
+                if (filterBadge) {
+                    filterBadge.remove();
+                }
+            }
+        }
+
+        // Add notification function for feedback
+        function showNotification(message, type = 'info') {
+            // Create notification container if it doesn't exist
+            let container = document.getElementById('notifications-area');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notifications-area';
+                container.className = 'fixed top-20 right-4 w-80 z-50 space-y-2';
+                document.body.appendChild(container);
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `transform translate-x-full transition-all duration-300 px-4 py-3 rounded shadow-lg flex items-center ${
+                type === 'success' ? 'bg-green-600' :
+                type === 'error' ? 'bg-red-600' :
+                type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
+            }`;
+            
+            // Set icon based on type
+            const icon = type === 'success' ? 'check-circle' :
+                        type === 'error' ? 'exclamation-circle' :
+                        type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+            
+            notification.innerHTML = `
+                <i class="fas fa-${icon} mr-3"></i>
+                <span>${message}</span>
+            `;
+            
+            // Add to container
+            container.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Remove after delay
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // Fix the filter toggle functionality - ensure IDs match
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the correct ID - in your HTML it's "filterPanel" but your scripts look for "filtersPanel"
+            const filtersToggle = document.getElementById('filtersToggle');
+            const filterPanel = document.getElementById('filterPanel');
+            const filterChevron = document.getElementById('filterChevron');
+
+            if (filtersToggle && filterPanel && filterChevron) {
+                filtersToggle.addEventListener('click', function() {
+                    filterPanel.classList.toggle('hidden');
+                    
+                    // Rotate chevron icon when toggled
+                    filterChevron.classList.toggle('transform');
+                    filterChevron.classList.toggle('rotate-180');
+                });
+            }
+        });
+
+        // Fix the search input - ensure correct ID is used
+        document.addEventListener('DOMContentLoaded', function() {
+            // In the HTML it's "searchAmmo" but some parts of JS look for "searchInput"
+            const searchAmmo = document.getElementById('searchAmmo');
+            
+            if (searchAmmo) {
+                searchAmmo.addEventListener('input', applyFilters);
+            }
+        });
+
+        // Fix Add Ammunition button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the correct button - it's "addItemBtn" in HTML
+            const addItemBtn = document.getElementById('addItemBtn');
+            const ammoModal = document.getElementById('ammoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const ammoForm = document.getElementById('ammoForm');
+            
+            if (addItemBtn && ammoModal) {
+                addItemBtn.addEventListener('click', function() {
+                    modalTitle.innerHTML = '<i class="fas fa-plus-circle text-blue-500 mr-2"></i>Add New Ammunition';
+                    ammoForm.reset();
+                    document.getElementById('ammoId').value = '';
+                    ammoModal.classList.remove('hidden');
+                });
+            }
+        });
+
+        // Add export functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const exportBtn = document.getElementById('exportBtn');
+            
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    // Export ammunition data as CSV
+                    exportToCSV(ammunition, 'ammunition_data');
+                });
+            }
+            
+            // Add bulk export functionality
+            const bulkExportBtn = document.getElementById('bulkExportBtn');
+            
+            if (bulkExportBtn) {
+                bulkExportBtn.addEventListener('click', function() {
+                    const selectedIds = Array.from(document.querySelectorAll('.item-checkbox:checked'))
+                        .map(checkbox => parseInt(checkbox.getAttribute('data-id')));
+                        
+                    const selectedAmmo = ammunition.filter(ammo => selectedIds.includes(ammo.id));
+                    exportToCSV(selectedAmmo, 'selected_ammunition');
+                });
+            }
+        });
+
+        // Export to CSV function
+        function exportToCSV(data, filename) {
+            // Define headers based on data structure
+            const headers = ['ID', 'Type', 'Caliber', 'Quantity', 'Location', 'Expiry Date', 'Status', 'Notes'];
+            
+            // Convert data to CSV format
+            let csvContent = headers.join(',') + '\n';
+            
+            data.forEach(item => {
+                const row = [
+                    item.id,
+                    '"' + (item.type || '').replace(/"/g, '""') + '"',
+                    '"' + (item.caliber || '').replace(/"/g, '""') + '"',
+                    item.quantity,
+                    '"' + (item.location || '').replace(/"/g, '""') + '"',
+                    item.expiryDate,
+                    '"' + (item.status || '').replace(/"/g, '""') + '"',
+                    '"' + (item.notes || '').replace(/"/g, '""') + '"'
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Create download link
+            const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', filename + '.csv');
+            document.body.appendChild(link);
+            
+            // Download the data file
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show notification
+            showNotification(`Successfully exported ${data.length} records to CSV`, 'success');
+        }
     </script>
 </body>
 </html>
